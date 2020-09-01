@@ -1,0 +1,28 @@
+{
+  "name": "@augejs/amqp",
+  "version": "0.0.2-alpha.0",
+  "description": "",
+  "main": "./dist/main.js",
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "tsc --build ./tsconfig.json",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "files": [
+    "./dist/**"
+  ],
+  "author": "Alex.Zhang",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "amqp-connection-manager": "^3.2.0",
+    "amqplib": "^0.5.6"
+  },
+  "devDependencies": {
+    "@types/amqp-connection-manager": "^2.0.10",
+    "amqp-connection-manager": "^3.2.1",
+    "rimraf": "^3.0.2"
+  }
+}

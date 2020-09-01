@@ -1,0 +1,26 @@
+{
+  "name": "@augejs/file-config",
+  "version": "0.0.2-alpha.0",
+  "description": "",
+  "main": "./dist/main.js",
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "tsc --build ./tsconfig.json",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Alex.Zhang",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "rimraf": "^3.0.2"
+  },
+  "dependencies": {
+    "@types/js-yaml": "^3.12.5",
+    "dotenv": "^8.2.0",
+    "dotenv-expand": "^5.1.0",
+    "js-yaml": "^3.14.0",
+    "properties": "^1.2.1"
+  }
+}

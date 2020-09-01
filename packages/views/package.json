@@ -1,0 +1,27 @@
+{
+  "name": "@augejs/views",
+  "version": "0.0.2-alpha.0",
+  "description": "",
+  "main": "./dist/main.js",
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "tsc --build ./tsconfig.json",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Alex.Zhang",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "rimraf": "^3.0.2"
+  },
+  "dependencies": {
+    "@types/consolidate": "^0.14.0",
+    "@types/html-minifier": "^4.0.0",
+    "consolidate": "^0.16.0",
+    "get-paths": "0.0.7",
+    "html-minifier": "^4.0.0",
+    "pretty": "^2.0.0"
+  }
+}
