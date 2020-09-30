@@ -1,6 +1,6 @@
 {
   "name": "@augejs/redis",
-  "version": "0.0.2-alpha.0",
+  "version": "1.0.1-rc.1",
   "description": "",
   "main": "./dist/main.js",
   "scripts": {
@@ -14,8 +14,8 @@
     "access": "public"
   },
   "dependencies": {
-    "ioredis": "^4.17.3",
-    "@types/ioredis": "^4.14.6"
+    "@types/ioredis": "^4.14.6",
+    "ioredis": "^4.17.3"
   },
   "devDependencies": {
     "rimraf": "^3.0.2"
