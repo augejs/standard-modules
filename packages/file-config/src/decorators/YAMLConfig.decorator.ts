@@ -2,14 +2,15 @@ import yaml from 'js-yaml';
 import fs from 'fs';
 import { ConfigLoader, IScanNode } from '@augejs/module-core';
 
-export function YAMLConfig(opts: 
-  { filePath: string, 
-    processor?: Function }) :ClassDecorator {
+export function YAMLConfig(filePath: string, 
+  opts?: {
+    processor?: (result: any, scanNode: IScanNode) => any | void | Promise<any| void> 
+  }) :ClassDecorator {
   return ConfigLoader(async (scanNode: IScanNode )=> {
-    if (!opts.filePath) return;
-    let result:object = yaml.safeLoad(fs.readFileSync(opts.filePath, 'utf8')) as object;
-    if (opts.processor) {
-      result = await opts.processor(result, scanNode);
+    let result:any = yaml.safeLoad(fs.readFileSync(filePath, 'utf8'));
+    if (opts?.processor) {
+      const processorResult: any = await opts.processor(result, scanNode);
+      result = processorResult === undefined ? result : processorResult;
     }
     return result;
   })
