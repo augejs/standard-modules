@@ -3,17 +3,16 @@ import dotenv from 'dotenv';
 import dotenvExpand from 'dotenv-expand';
 import { ConfigLoader, IScanNode } from '@augejs/module-core';
 
-export function DotENVConfig(opts: {
-  filePath: string,
-  processor?: Function
+export function DotENVConfig(filePath: string,
+  opts?: {
+  processor?: (result: any, scanNode: IScanNode) => any | void | Promise<any| void>
 }) :ClassDecorator {
   return ConfigLoader(async (scanNode: IScanNode )=> {
-
-    let result:object = dotenvExpand(dotenv.parse(fs.readFileSync(opts.filePath, 'utf8'))) as object;
-    if (opts.processor) {
-      result = await opts.processor(result, scanNode);
+    let result:any = dotenvExpand(dotenv.parse(fs.readFileSync(filePath, 'utf8')));
+    if (opts?.processor) {
+      const processorResult: any = await opts.processor(result, scanNode);
+      result = processorResult === undefined ? result : processorResult;
     }
-
     return result;
   })
 }
