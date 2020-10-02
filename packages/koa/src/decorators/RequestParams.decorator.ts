@@ -1,9 +1,9 @@
 import { Metadata } from '@augejs/module-core';
 import { Context } from 'koa';
 
-export function RequestParams(reducer: Function):ParameterDecorator {
+export function RequestParams(processor: (input: any) => any | void | Promise<any | void>):ParameterDecorator {
   return (target: Object, propertyKey: string | symbol, parameterIndex: number) => {
-    RequestParams.defineMetadata(target.constructor, reducer, propertyKey, parameterIndex);
+    RequestParams.defineMetadata(target.constructor, processor, propertyKey, parameterIndex);
   }
 }
 

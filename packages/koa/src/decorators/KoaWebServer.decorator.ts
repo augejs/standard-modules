@@ -172,9 +172,15 @@ async function buildRouteByRequestMappingMetadata(router: Router, metadata: Requ
       if (instanceMethod.length > 0) {
         for (let idx:number = 0; idx < instanceMethod.length; idx++) {
           const argsFns:Function[] = RequestParams.getMetadata(metadata.scanNode.provider, metadata.propertyKey, idx);
-          const argsResult:any = argsFns.reduce((result:any, fn: Function):any => {
-            return fn(result) || result;
-          }, context);
+          let argsResult:any = context;
+          for (const argsFn of argsFns) {
+            let currentArgsResult: any = argsFn(argsResult);
+            if (currentArgsResult === undefined) continue;
+            if (typeof currentArgsResult?.then === 'function') {
+              currentArgsResult = await currentArgsResult;
+            }
+            argsResult = currentArgsResult;
+          }
           methodActualArgs.push(argsResult);
         }
       }
@@ -186,5 +192,5 @@ async function buildRouteByRequestMappingMetadata(router: Router, metadata: Requ
     }
   )
   
-  logger.verbose(`Route bind ${routePaths.join(',')} to ${metadata.scanNode.name}`);
+  logger.verbose(`Route bind ${routePaths.join('/')} to ${metadata.scanNode.name}:${metadata.propertyKey.toString()}`);
 }
