@@ -1,6 +1,6 @@
 {
   "name": "@augejs/schedule",
-  "version": "1.0.1-rc.3",
+  "version": "1.0.1-rc.4",
   "description": "",
   "main": "./dist/main.js",
   "scripts": {
@@ -8,8 +8,16 @@
     "build": "tsc --build ./tsconfig.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/augejs/standard-modules.git"
+  },
   "author": "Alex.Zhang",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/augejs/standard-modules/issues"
+  },
+  "homepage": "https://augejs.github.io/docs/Techniques-Schedule",
   "publishConfig": {
     "access": "public"
   },
