@@ -8,8 +8,16 @@
     "build": "tsc --build ./tsconfig.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/augejs/standard-modules.git"
+  },
   "author": "Alex.Zhang",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/augejs/standard-modules/issues"
+  },
+  "homepage": "https://augejs.github.io/docs/Techniques-Schedule",
   "publishConfig": {
     "access": "public"
   },
