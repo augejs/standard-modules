@@ -14,7 +14,7 @@
     "access": "public"
   },
   "dependencies": {
-    "axios": "0.20.0-0"
+    "axios": "^0.20.0"
   },
   "files": [
     "./dist/**"

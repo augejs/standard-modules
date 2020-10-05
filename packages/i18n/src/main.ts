@@ -7,10 +7,8 @@ import {createIntl, createIntlCache, IntlShape, CustomFormats, OnErrorFn } from 
 
 export const I18N_IDENTIFIER = 'i18n';
 
-declare module '@formatjs/intl' {
-  interface IntlShape<T> {
-    get(locale: string): IntlShape<T>
-  }
+export interface II18n<T=string> extends IntlShape<T> {
+  get(locale: string): IntlShape<T>
 }
 
 function flattening(data:any) {
@@ -113,7 +111,7 @@ export function I18n(opts?: I18nOptions): ClassDecorator {
           };
 
           const localNames = Object.keys(intlMap);
-          if (localNames.length >= 0) {
+          if (localNames.length > 0) {
             if (!localNames.includes(defaultLocale)) {
               defaultLocale = localNames[0]
             }

@@ -8,7 +8,16 @@ export const VIEWS_IDENTIFIER= 'views';
 
 // https://github.com/tj/consolidate.js/
 
-export function Views(opts?: any): ClassDecorator {
+export type ViewOptions = {
+  root?: string
+  state?: object
+  suffixAlias?: object
+  minifier?: boolean | object
+}
+
+export type RenderFunction = (filePath: string, state?: any) => Promise<string>;
+
+export function Views(opts?: ViewOptions): ClassDecorator {
   return function(target: Function) {
     Metadata.decorate([
       Config({
@@ -24,7 +33,7 @@ export function Views(opts?: any): ClassDecorator {
         async (scanNode: IScanNode, next: Function) => {
           const config: any = {
             ...scanNode.context.rootScanNode!.getConfig(VIEWS_IDENTIFIER),
-            ...scanNode.get(VIEWS_IDENTIFIER),
+            ...scanNode.getConfig(VIEWS_IDENTIFIER),
             ...opts,
           };
 
@@ -39,10 +48,12 @@ export function Views(opts?: any): ClassDecorator {
               suffix = suffixAlias[suffix] || suffix;
             }
 
+            const fileAbsPath: string = path.join(rootPath, filePath);
+
             let html: string = '';
 
             if (suffix === 'html') {
-              html = fs.readFileSync(opts.filePath, 'utf8');
+              html = fs.readFileSync(fileAbsPath, 'utf8');
             } else {
               state = {
                 ...optsState,
@@ -57,8 +68,7 @@ export function Views(opts?: any): ClassDecorator {
               if (!render) {
                 throw new Error(`Template Engine is not support for '.${suffix}'`)
               }
-  
-              const fileAbsPath: string = path.join(rootPath, filePath);
+              
               html = await templateRender(fileAbsPath, state);
             }
 

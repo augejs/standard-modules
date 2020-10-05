@@ -1,14 +1,14 @@
 import IORedis, { Commands } from 'ioredis';
-import { Metadata, LifecycleOnInitHook, IScanNode, ScanHook, Logger } from '@augejs/module-core';
+import { Metadata, LifecycleOnInitHook, IScanNode, ScanHook, Logger, LifecycleOnAppWillCloseHook } from '@augejs/module-core';
 import { EventEmitter } from 'events';
 
 export const REDIS_IDENTIFIER = 'redis';
 
 // https://github.com/luin/ioredis/blob/master/API.md
 
-const logger = Logger.getLogger(REDIS_IDENTIFIER);
+export { Commands };
 
-export function Redis(opts?: any): ClassDecorator {
+export function RedisConfig(opts?: any): ClassDecorator {
   return function(target: Function) {
     Metadata.decorate([
 
@@ -22,9 +22,18 @@ export function Redis(opts?: any): ClassDecorator {
           const startupNodes:[] = config?.startupNodes;
           let redis: Commands;
           if (startupNodes && startupNodes.length > 0) {
-            redis = new IORedis.Cluster(startupNodes, config);
+            redis = new IORedis.Cluster(startupNodes, {
+              ...config,
+              redisOptions: {
+                ...config?.redisOptions,
+                lazyConnect: true,
+              }
+            });
           } else {
-            redis = new IORedis(config);
+            redis = new IORedis({
+              ...config,
+              lazyConnect: true,
+            });
           }
           scanNode.context.container.bind(REDIS_IDENTIFIER).toConstantValue(redis);
 
@@ -34,20 +43,17 @@ export function Redis(opts?: any): ClassDecorator {
 
       LifecycleOnInitHook(
         async (scanNode: IScanNode, next: Function) => {
-          const redis: EventEmitter = scanNode.context.container.get<EventEmitter>(REDIS_IDENTIFIER);
-          await new Promise((resolve:Function, reject: Function) => {
-            redis.once('connect', () => {
-              resolve();
-            });
-            redis.once('error', err => {
-              reject(err);
-            });
-          });
+          const redis: any = scanNode.context.container.get<EventEmitter>(REDIS_IDENTIFIER);
+          await redis.connect();
+          
+          await next();
+        }
+      ),
 
-          redis.on('error', err => {
-            logger.warn(`redis on err: ${err} \n ${err?.stack}`);
-          });
-
+      LifecycleOnAppWillCloseHook(
+        async (scanNode: IScanNode, next: Function) => {
+          const redis: any = scanNode.context.container.get<EventEmitter>(REDIS_IDENTIFIER);
+          await redis.disconnect();
           await next();
         }
       )

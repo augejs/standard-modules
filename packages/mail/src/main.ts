@@ -1,9 +1,12 @@
 import nodemailer from 'nodemailer';
 import { Metadata, IScanNode, ScanHook } from '@augejs/module-core';
+import Mail from 'nodemailer/lib/mailer';
 
 export const MAIL_TOKEN = 'MAIL_TOKEN';
 
-export * from 'nodemailer';
+export {
+  Mail
+}
 
 // https://nodemailer.com/about/
 

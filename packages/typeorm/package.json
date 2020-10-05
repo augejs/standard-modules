@@ -14,11 +14,12 @@
     "access": "public"
   },
   "devDependencies": {
-    "@types/node": "^13.7.0",
-    "rimraf": "^3.0.2",
-    "typeorm": "^0.2.25"
+    "rimraf": "^3.0.2"
   },
   "files": [
     "./dist/**"
-  ]
+  ],
+  "dependencies": {
+    "typeorm": "^0.2.28"
+  }
 }
