@@ -1,6 +1,6 @@
 {
   "name": "@augejs/schedule",
-  "version": "1.0.1-rc.1",
+  "version": "1.0.1-rc.2",
   "description": "",
   "main": "./dist/main.js",
   "scripts": {
@@ -20,8 +20,6 @@
     "./dist/**"
   ],
   "devDependencies": {
-    "@types/ioredis": "^4.14.6",
-    "ioredis": "^4.17.3",
     "rimraf": "^3.0.2"
   }
 }

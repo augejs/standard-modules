@@ -13,6 +13,8 @@ import {
   ScanHook 
 } from "@augejs/module-core";
 
+import { IKoaApplication } from '../interfaces';
+
 import { RequestMapping, HttpMethodEnum, RequestMappingMetadata } from './RequestMapping.decorator';
 import { Prefix } from './Prefix.decorator';
 import { Middleware, MiddlewareMetadata } from './Middleware.decorator';
@@ -21,15 +23,22 @@ import { RequestParams } from './RequestParams.decorator';
 export const KOA_WEB_SERVER_IDENTIFIER:string = 'webserver';
 const logger: ILogger = Logger.getLogger(KOA_WEB_SERVER_IDENTIFIER);
 
-export const KOA_ROUTER_IDENTIFIER:string = 'router';
-
 declare module 'koa' {
   interface Context {
     scanContext: IScanContext
+    app: IKoaApplication;
   }
 }
 
-export function KoaWebServer(opts?: any): ClassDecorator {
+type WebServerOptions = {
+  host?: string
+  port?: number
+  proxy?: boolean
+  sensitive?: boolean,
+  strict?: boolean
+}
+
+export function WebServer(opts?: WebServerOptions): ClassDecorator {
   return function(target: Function) {
     Metadata.decorate([
       Config({
@@ -49,33 +58,34 @@ export function KoaWebServer(opts?: any): ClassDecorator {
           ...scanNode.getConfig(KOA_WEB_SERVER_IDENTIFIER),
         }
 
-        scanNode.context.container.bind(KOA_WEB_SERVER_IDENTIFIER).toConstantValue(new Application());
-        scanNode.context.container.bind(KOA_ROUTER_IDENTIFIER).toConstantValue(new Router({
+        const koa: any = new Application();
+        const router: Router = new Router({
           prefix: config.prefix,
           methods: config.methods,
           routerPath: config.routerPath,
           sensitive: config.sensitive,
           strict: config.strict
-        }));
+        });
+        koa.router = router;
+        scanNode.context.container.bind(KOA_WEB_SERVER_IDENTIFIER).toConstantValue(koa);
         await next();
       }),
       Lifecycle__onAppReady__Hook(
         async (scanNode: IScanNode, next: Function) => {
-          const koa: Application = scanNode.context.container.get<Application>(KOA_WEB_SERVER_IDENTIFIER);
-          const router: Router = scanNode.context.container.get<Router>(KOA_ROUTER_IDENTIFIER);
+          const koa: IKoaApplication = scanNode.context.container.get<IKoaApplication>(KOA_WEB_SERVER_IDENTIFIER);
           const config: any = scanNode.getConfig(KOA_WEB_SERVER_IDENTIFIER);
 
           koa.context.scanContext = scanNode.context;
 
           for (const metadata of RequestMapping.getMetadata()) {
-            await buildRouteByRequestMappingMetadata(router, metadata);
+            await buildRouteByRequestMappingMetadata(koa.router, metadata);
           }
         
           await next();
 
           koa
-          .use(router.routes())
-          .use(router.allowedMethods());
+          .use(koa.router.routes())
+          .use(koa.router.allowedMethods());
 
           const { host, port } = config;
           await new Promise((resolve: Function) => {
@@ -83,7 +93,7 @@ export function KoaWebServer(opts?: any): ClassDecorator {
               resolve();
             })
           });
-          //-
+          logger.verbose(`web server start host: ${host} port: ${port}`);
         }
       )
     ], target);

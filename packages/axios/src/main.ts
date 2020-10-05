@@ -1,9 +1,13 @@
 import { Config, Metadata, ScanHook, IScanNode } from '@augejs/module-core';
-import Axios from 'axios';
+import Axios, { AxiosInstance } from 'axios';
+
+export {
+  AxiosInstance
+}
 
 export const AXIOS_IDENTIFIER = 'axios';
 
-export function AxiosHttpClient(opts?: Record<string, any>): ClassDecorator {
+export function AxiosConfig(opts?: Record<string, any>): ClassDecorator {
   return function(target: Function) {
     Metadata.decorate([
       Config({

@@ -8,7 +8,7 @@ import {
 
 import { CronJob } from 'cron';
 
-import { Schedule, ScheduleTask } from './Schedule.decorator';
+import { Schedule } from './Schedule.decorator';
 
 const SCHEDULE_IDENTIFIER = 'schedule';
 
