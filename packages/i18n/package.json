@@ -1,6 +1,6 @@
 {
   "name": "@augejs/i18n",
-  "version": "1.0.1-rc.4",
+  "version": "1.0.1-rc.5",
   "description": "",
   "main": "./dist/main.js",
   "scripts": {
@@ -19,7 +19,7 @@
   },
   "homepage": "https://augejs.github.io/docs/Techniques-I18n",
   "files": [
-    "./dist/**"
+    "dist"
   ],
   "publishConfig": {
     "access": "public"
