@@ -25,7 +25,7 @@
     "cron": "^1.8.2"
   },
   "files": [
-    "./dist/**"
+    "dist"
   ],
   "devDependencies": {
     "rimraf": "^3.0.2"

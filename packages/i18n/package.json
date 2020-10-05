@@ -19,7 +19,7 @@
   },
   "homepage": "https://augejs.github.io/docs/Techniques-I18n",
   "files": [
-    "./dist/**"
+    "dist"
   ],
   "publishConfig": {
     "access": "public"
