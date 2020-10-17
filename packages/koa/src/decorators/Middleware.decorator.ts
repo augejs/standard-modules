@@ -1,4 +1,4 @@
-import { Metadata, ScanHook, IScanNode, Injectable, Name } from '@augejs/module-core';
+import { Metadata, ScanHook, IScanNode, Injectable, Name, LifecycleOnInitHook } from '@augejs/module-core';
 
 export type MiddlewareMetadata = {
   scanNode: IScanNode
@@ -29,7 +29,7 @@ export function MiddlewareFactory(factory: Function): ClassDecorator & MethodDec
     const isConstructor:boolean = typeof target === 'function';
     const constructor:Function = isConstructor ? (target as Function) : target.constructor; 
     Metadata.decorate([
-      ScanHook(async (scanNode: IScanNode, next: Function)=> {
+      LifecycleOnInitHook(async (scanNode: IScanNode, next: Function)=> {
         const hooks: Function[] | Function = await factory(scanNode);
         const metadata: MiddlewareMetadata = {
           scanNode,

@@ -4,7 +4,8 @@ import path from 'path';
 import fs from 'fs';
 import { Metadata, IScanNode, ScanHook, Config } from '@augejs/module-core';
 
-export const VIEWS_IDENTIFIER= 'views';
+export const ConfigName = 'views';
+export const VIEWS_IDENTIFIER= Symbol.for(ConfigName);
 
 // https://github.com/tj/consolidate.js/
 
@@ -21,7 +22,7 @@ export function Views(opts?: ViewOptions): ClassDecorator {
   return function(target: Function) {
     Metadata.decorate([
       Config({
-        [VIEWS_IDENTIFIER]: {
+        [ConfigName]: {
           root: path.join(process.cwd(), 'views'),
           state: {},
           suffixAlias: {},
@@ -32,8 +33,8 @@ export function Views(opts?: ViewOptions): ClassDecorator {
       ScanHook(
         async (scanNode: IScanNode, next: Function) => {
           const config: any = {
-            ...scanNode.context.rootScanNode!.getConfig(VIEWS_IDENTIFIER),
-            ...scanNode.getConfig(VIEWS_IDENTIFIER),
+            ...scanNode.context.rootScanNode!.getConfig(ConfigName),
+            ...scanNode.getConfig(ConfigName),
             ...opts,
           };
 

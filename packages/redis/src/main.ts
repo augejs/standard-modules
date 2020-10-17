@@ -2,21 +2,23 @@ import IORedis, { Commands } from 'ioredis';
 import { Metadata, LifecycleOnInitHook, IScanNode, ScanHook, Logger, LifecycleOnAppWillCloseHook } from '@augejs/module-core';
 import { EventEmitter } from 'events';
 
-export const REDIS_IDENTIFIER = 'redis';
+export const ConfigName = 'redis';
+
+export const REDIS_IDENTIFIER = Symbol.for('redis');
 
 // https://github.com/luin/ioredis/blob/master/API.md
 
 export { Commands };
 
-export function RedisConfig(opts?: any): ClassDecorator {
+export function RedisConnection(opts?: any): ClassDecorator {
   return function(target: Function) {
     Metadata.decorate([
 
       ScanHook(
         async (scanNode: IScanNode, next: Function) => {
           const config: any = {
-            ...scanNode.context.rootScanNode?.getConfig(REDIS_IDENTIFIER),
-            ...scanNode.getConfig(REDIS_IDENTIFIER),
+            ...scanNode.context.rootScanNode?.getConfig(ConfigName),
+            ...scanNode.getConfig(ConfigName),
             ...opts
           }
           const startupNodes:[] = config?.startupNodes;
@@ -60,3 +62,31 @@ export function RedisConfig(opts?: any): ClassDecorator {
     ],target)
   }
 }
+
+const RedisLockPrefix = 'redisLock:';
+
+export function RedisLock(key: string, time?: number): MethodDecorator {
+  return (target:Object, propertyKey:string | symbol, descriptor: PropertyDescriptor) => {
+    const originalMethod: Function = descriptor!.value;
+    descriptor!.value = async function (...args: any[]) {
+      const scanNode: IScanNode | null = this['$scanNode'] || null;
+      const redis: Commands | null = scanNode?.context.container.get(REDIS_IDENTIFIER) || null;
+      const redisLockKey: string = RedisLockPrefix + key;
+
+      if (redis) {
+        const lockStatus = await redis.get(redisLockKey);
+        if (lockStatus) {
+          return;
+        }
+        await redis.set(redisLockKey, 'Lock' ,'PX', time);
+      }
+
+      await originalMethod.apply(this, args);
+
+      if (redis) {
+        await redis.del(redisLockKey);
+      }
+    }
+  }
+}
+

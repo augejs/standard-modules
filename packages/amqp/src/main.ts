@@ -2,9 +2,13 @@
 import { Config, Metadata, ScanHook, IScanNode, LifecycleOnInitHook, Logger, LifecycleOnAppWillCloseHook } from '@augejs/module-core'
 import amqpConnectionManager, { AmqpConnectionManager } from 'amqp-connection-manager'
 
-export const AMQP_IDENTIFIER = 'amqp';
+export const ConfigName = 'amqp';
 
-const logger = Logger.getLogger(AMQP_IDENTIFIER);
+export const AMQP_IDENTIFIER = Symbol.for(ConfigName);
+
+
+
+const logger = Logger.getLogger(ConfigName);
 
 // https://github.com/benbria/node-amqp-connection-manager
 
@@ -12,7 +16,7 @@ export function Amqp(opts?: any): ClassDecorator {
   return function(target: Function) {
     Metadata.decorate([
       Config({
-        [AMQP_IDENTIFIER]: {
+        [ConfigName]: {
           urls: undefined,
           heartbeatIntervalInSeconds: 5, // 5s
         }
@@ -20,8 +24,8 @@ export function Amqp(opts?: any): ClassDecorator {
 
       ScanHook(async (scanNode: IScanNode, next: Function) => {
         const config: any = {
-          ...scanNode.context.rootScanNode!.getConfig(AMQP_IDENTIFIER),
-          ...scanNode.getConfig(AMQP_IDENTIFIER),
+          ...scanNode.context.rootScanNode!.getConfig(ConfigName),
+          ...scanNode.getConfig(ConfigName),
           ...opts,
         };
 
