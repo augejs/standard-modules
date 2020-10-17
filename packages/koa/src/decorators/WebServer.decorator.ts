@@ -20,8 +20,10 @@ import { Prefix } from './Prefix.decorator';
 import { Middleware, MiddlewareMetadata } from './Middleware.decorator';
 import { RequestParams } from './RequestParams.decorator';
 
-export const KOA_WEB_SERVER_IDENTIFIER:string = 'webserver';
-const logger: ILogger = Logger.getLogger(KOA_WEB_SERVER_IDENTIFIER);
+export const ConfigName = 'webserver';
+export const KOA_WEB_SERVER_IDENTIFIER = Symbol.for(ConfigName);
+
+const logger: ILogger = Logger.getLogger(ConfigName);
 
 declare module 'koa' {
   interface Context {
@@ -42,8 +44,8 @@ export function WebServer(opts?: WebServerOptions): ClassDecorator {
   return function(target: Function) {
     Metadata.decorate([
       Config({
-        [KOA_WEB_SERVER_IDENTIFIER]: {
-          host: '127.0.0.1',
+        [ConfigName]: {
+          host: '0.0.0.0',
           port: 7001,
           proxy: false,
           sensitive: false,
@@ -54,8 +56,8 @@ export function WebServer(opts?: WebServerOptions): ClassDecorator {
 
       ScanHook(async (scanNode: IScanNode, next: Function) => {
         const config: any = {
-          ...scanNode.context.rootScanNode!.getConfig(KOA_WEB_SERVER_IDENTIFIER),
-          ...scanNode.getConfig(KOA_WEB_SERVER_IDENTIFIER),
+          ...scanNode.context.rootScanNode!.getConfig(ConfigName),
+          ...scanNode.getConfig(ConfigName),
         }
 
         const koa: any = new Application();
@@ -73,7 +75,7 @@ export function WebServer(opts?: WebServerOptions): ClassDecorator {
       Lifecycle__onAppReady__Hook(
         async (scanNode: IScanNode, next: Function) => {
           const koa: IKoaApplication = scanNode.context.container.get<IKoaApplication>(KOA_WEB_SERVER_IDENTIFIER);
-          const config: any = scanNode.getConfig(KOA_WEB_SERVER_IDENTIFIER);
+          const config: any = scanNode.getConfig(ConfigName);
 
           koa.context.scanContext = scanNode.context;
 

@@ -5,13 +5,15 @@ export {
   AxiosInstance
 }
 
-export const AXIOS_IDENTIFIER = 'axios';
+export const ConfigName = 'axios';
+
+export const AXIOS_IDENTIFIER = Symbol.for(ConfigName);
 
 export function AxiosConfig(opts?: Record<string, any>): ClassDecorator {
   return function(target: Function) {
     Metadata.decorate([
       Config({
-        [AXIOS_IDENTIFIER]: {
+        [ConfigName]: {
           timeout: 5000,
           withCredentials: false,
           ...opts,
@@ -20,8 +22,8 @@ export function AxiosConfig(opts?: Record<string, any>): ClassDecorator {
 
       ScanHook(async (scanNode: IScanNode, next: Function) => {
         const config: any = {
-          ...scanNode.context.rootScanNode!.getConfig(AXIOS_IDENTIFIER),
-          ...scanNode.getConfig(AXIOS_IDENTIFIER)
+          ...scanNode.context.rootScanNode!.getConfig(ConfigName),
+          ...scanNode.getConfig(ConfigName)
         };
 
         scanNode.context.container.bind(AXIOS_IDENTIFIER).toConstantValue(Axios.create(config));

@@ -5,7 +5,9 @@ import yaml from 'js-yaml';
 import properties from 'properties';
 import {createIntl, createIntlCache, IntlShape, CustomFormats, OnErrorFn } from '@formatjs/intl'
 
-export const I18N_IDENTIFIER = 'i18n';
+export const ConfigName = 'i18n';
+
+export const I18N_IDENTIFIER = Symbol.for(ConfigName);
 
 export interface II18n<T=string> extends IntlShape<T> {
   get(locale: string): IntlShape<T>
@@ -45,7 +47,7 @@ export function I18n(opts?: I18nOptions): ClassDecorator {
   return function(target: Function) {
     Metadata.decorate([
       Config({
-        [I18N_IDENTIFIER]: {
+        [ConfigName]: {
           root: path.join(process.cwd(), 'locales'),
           defaultLocale: 'en',
           formats: null,
@@ -58,8 +60,8 @@ export function I18n(opts?: I18nOptions): ClassDecorator {
       ScanHook(
         async (scanNode: IScanNode, next: Function) => {
           const config: any = {
-            ...scanNode.context.rootScanNode?.getConfig(I18N_IDENTIFIER),
-            ...scanNode.getConfig(I18N_IDENTIFIER),
+            ...scanNode.context.rootScanNode?.getConfig(ConfigName),
+            ...scanNode.getConfig(ConfigName),
             ...opts
           };
 

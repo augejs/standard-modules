@@ -1,7 +1,8 @@
 import { Connection, createConnection, createConnections } from "typeorm"
-import { Config, Metadata, ScanHook, IScanNode, LifecycleOnInitHook } from '@augejs/module-core'
+import { Metadata, ScanHook, IScanNode, LifecycleOnInitHook } from '@augejs/module-core'
 
-const TYPE_ORM_IDENTIFIER = 'typeorm';
+const ConfigName = 'typeorm';
+const TYPE_ORM_IDENTIFIER = Symbol.for(ConfigName);
 
 // https://typeorm.io/#/connection
 export function Typeorm(opts?: any): ClassDecorator {
@@ -9,8 +10,8 @@ export function Typeorm(opts?: any): ClassDecorator {
     Metadata.decorate([
       ScanHook(async (scanNode: IScanNode, next: Function) => {
         const config: any = {
-          ...scanNode.context.rootScanNode!.getConfig(TYPE_ORM_IDENTIFIER),
-          ...scanNode.getConfig(TYPE_ORM_IDENTIFIER),
+          ...scanNode.context.rootScanNode!.getConfig(ConfigName),
+          ...scanNode.getConfig(ConfigName),
           ...opts,
         };
         

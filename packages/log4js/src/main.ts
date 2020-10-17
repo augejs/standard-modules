@@ -1,14 +1,15 @@
 import { Config, Metadata, ScanHook, IScanNode, LifecycleOnInitHook, LogLevel, ILogTransport, ILogItem, Logger, LifecycleOnAppWillCloseHook } from '@augejs/module-core';
 import log4js, { Logger as Log4JsLogger } from 'log4js';
 
-export const LOG4JS_IDENTIFIER = 'log4js';
+export const ConfigName = 'log4js';
+export const LOG4JS_IDENTIFIER = Symbol.for(ConfigName);
 
 export function Log4js(opts?: any): ClassDecorator {
   return function(target: Function) {
     Metadata.decorate([
       Config({
         // https://log4js-node.github.io/log4js-node/file.html
-        [LOG4JS_IDENTIFIER]: {
+        [ConfigName]: {
           appenders: {
             out: { type: 'stdout' },
           },
@@ -21,8 +22,8 @@ export function Log4js(opts?: any): ClassDecorator {
 
       ScanHook(async (scanNode: IScanNode, next: Function) => {
         const config: any = {
-          ...scanNode.context.rootScanNode!.getConfig(LOG4JS_IDENTIFIER),
-          ...scanNode.getConfig(LOG4JS_IDENTIFIER),
+          ...scanNode.context.rootScanNode!.getConfig(ConfigName),
+          ...scanNode.getConfig(ConfigName),
         }
 
         log4js.configure(config);
