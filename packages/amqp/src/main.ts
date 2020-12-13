@@ -1,13 +1,13 @@
 
 import { Config, Metadata, ScanHook, IScanNode, LifecycleOnInitHook, Logger, LifecycleOnAppWillCloseHook } from '@augejs/module-core'
 import amqpConnectionManager, { AmqpConnectionManager, ChannelWrapper } from 'amqp-connection-manager'
-import { ConfirmChannel } from "amqplib";
+import { ConfirmChannel, Message } from "amqplib";
 
 const ConfigName = 'amqp';
 
 export const AMQP_IDENTIFIER = Symbol.for(ConfigName);
 
-export { AmqpConnectionManager, ChannelWrapper, ConfirmChannel }
+export { AmqpConnectionManager, ChannelWrapper, ConfirmChannel, Message }
 
 const logger = Logger.getLogger(ConfigName);
 
