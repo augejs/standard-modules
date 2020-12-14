@@ -5,6 +5,22 @@ import amqpConnectionManager, {
   AmqpConnectionManagerOptions 
 } from 'amqp-connection-manager'
 
+export { 
+  ConfirmChannel, 
+  Channel, 
+  ConsumeMessage, 
+  Message, 
+  GetMessage, 
+  CommonMessageFields, 
+  MessageFields, 
+  GetMessageFields, 
+  ConsumeMessageFields, 
+  MessageProperties, 
+  MessagePropertyHeaders, 
+  XDeath, 
+  ServerProperties 
+} from 'amqplib';
+
 const ConfigName = 'amqp';
 
 export const AMQP_IDENTIFIER = Symbol.for(ConfigName);
