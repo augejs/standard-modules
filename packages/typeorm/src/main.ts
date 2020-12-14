@@ -1,8 +1,8 @@
-import { Connection, createConnection, createConnections, ConnectionOptions } from "typeorm"
-import { Metadata, ScanHook, IScanNode, LifecycleOnInitHook } from '@augejs/module-core'
+import { createConnection, createConnections, ConnectionOptions } from "typeorm"
+import { Metadata, ScanHook, IScanNode } from '@augejs/module-core'
 
 const ConfigName = 'typeorm';
-const TYPE_ORM_IDENTIFIER = Symbol.for(ConfigName);
+// const TYPE_ORM_IDENTIFIER = Symbol.for(ConfigName);
 
 export * from 'typeorm';
 
@@ -17,26 +17,30 @@ export function Typeorm(opts?: ConnectionOptions | ConnectionOptions[]): ClassDe
           ...opts,
         };
         
-        const connections: Connection[] = [];
+        // const connections: Connection[] = [];
         if (Array.isArray(config)) {
-          const connections: Connection[] = await createConnections(config);
-          connections.push(...connections);
+          // const connections: Connection[] = await createConnections(config);
+          await createConnections(config);
+          // connections.push(...connections);
         } else {
-          const connection: Connection = await createConnection(config);
-          connections.push(connection);
+          // const connection: Connection = await createConnection(config);
+          // connections.push(connection);
+          await createConnection(config);
         }
-        scanNode.context.container.bind(TYPE_ORM_IDENTIFIER).toConstantValue(connections);
+        // scanNode.context.container.bind(TYPE_ORM_IDENTIFIER).toConstantValue(connections);
       }),
 
-      LifecycleOnInitHook(async (scanNode: IScanNode, next: Function) => {
-        const connections: Connection[] = scanNode.context.container.get<Connection[]>(TYPE_ORM_IDENTIFIER);
-        await Promise.all(connections.map((connection: Connection) => {
-          return connection.connect();
-        }));
-
-        await next();
-      })
+      // LifecycleOnInitHook(async (scanNode: IScanNode, next: Function) => {
+      //   const connections: Connection[] = scanNode.context.container.get<Connection[]>(TYPE_ORM_IDENTIFIER);
+      //   await Promise.all(connections.map((connection: Connection) => {
+      //     return connection.connect();
+      //   }));
+      //   await next();
+      // })
     ], target)
   }
 }
+
+
+
 
