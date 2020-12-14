@@ -1,15 +1,14 @@
 import { Config, Metadata, ScanHook, IScanNode } from '@augejs/module-core';
-import Axios, { AxiosInstance } from 'axios';
 
-export {
-  AxiosInstance
-}
+import Axios, { AxiosRequestConfig } from 'axios';
+
+export * from 'axios';
 
 export const ConfigName = 'axios';
 
 export const AXIOS_IDENTIFIER = Symbol.for(ConfigName);
 
-export function AxiosConfig(opts?: Record<string, any>): ClassDecorator {
+export function AxiosConfig(opts?: AxiosRequestConfig): ClassDecorator {
   return function(target: Function) {
     Metadata.decorate([
       Config({
@@ -26,7 +25,9 @@ export function AxiosConfig(opts?: Record<string, any>): ClassDecorator {
           ...scanNode.getConfig(ConfigName)
         };
 
-        scanNode.context.container.bind(AXIOS_IDENTIFIER).toConstantValue(Axios.create(config));
+        Object.assign(Axios.defaults, config);
+
+        scanNode.context.container.bind(AXIOS_IDENTIFIER).toConstantValue(Axios);
         await next();
       })
     ], target);

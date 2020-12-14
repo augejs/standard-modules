@@ -4,6 +4,8 @@ import { Metadata, ScanHook, IScanNode, LifecycleOnInitHook } from '@augejs/modu
 const ConfigName = 'typeorm';
 const TYPE_ORM_IDENTIFIER = Symbol.for(ConfigName);
 
+export * from 'typeorm';
+
 // https://typeorm.io/#/connection
 export function Typeorm(opts?: any): ClassDecorator {
   return function(target: Function) {

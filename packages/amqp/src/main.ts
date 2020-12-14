@@ -1,18 +1,23 @@
 
 import { Config, Metadata, ScanHook, IScanNode, LifecycleOnInitHook, Logger, LifecycleOnAppWillCloseHook } from '@augejs/module-core'
-import amqpConnectionManager, { AmqpConnectionManager, ChannelWrapper } from 'amqp-connection-manager'
-import { ConfirmChannel, Message } from "amqplib";
+import amqpConnectionManager, { 
+  AmqpConnectionManager, 
+  AmqpConnectionManagerOptions 
+} from 'amqp-connection-manager'
 
 const ConfigName = 'amqp';
 
 export const AMQP_IDENTIFIER = Symbol.for(ConfigName);
 
-export { AmqpConnectionManager, ChannelWrapper, ConfirmChannel, Message }
+export * from 'amqp-connection-manager';
 
 const logger = Logger.getLogger(ConfigName);
 
 // https://github.com/benbria/node-amqp-connection-manager
-export function Amqp(opts?: any): ClassDecorator {
+export function Amqp(opts?: {
+  urls: string[],
+  options: AmqpConnectionManagerOptions
+}): ClassDecorator {
   return function(target: Function) {
     Metadata.decorate([
       Config({
