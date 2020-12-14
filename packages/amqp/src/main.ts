@@ -16,7 +16,7 @@ const logger = Logger.getLogger(ConfigName);
 // https://github.com/benbria/node-amqp-connection-manager
 export function Amqp(opts?: {
   urls: string[],
-  options: AmqpConnectionManagerOptions
+  options?: AmqpConnectionManagerOptions
 }): ClassDecorator {
   return function(target: Function) {
     Metadata.decorate([
