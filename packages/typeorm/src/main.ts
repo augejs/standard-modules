@@ -1,4 +1,4 @@
-import { Connection, createConnection, createConnections } from "typeorm"
+import { Connection, createConnection, createConnections, ConnectionOptions } from "typeorm"
 import { Metadata, ScanHook, IScanNode, LifecycleOnInitHook } from '@augejs/module-core'
 
 const ConfigName = 'typeorm';
@@ -7,7 +7,7 @@ const TYPE_ORM_IDENTIFIER = Symbol.for(ConfigName);
 export * from 'typeorm';
 
 // https://typeorm.io/#/connection
-export function Typeorm(opts?: any): ClassDecorator {
+export function Typeorm(opts?: ConnectionOptions | ConnectionOptions[]): ClassDecorator {
   return function(target: Function) {
     Metadata.decorate([
       ScanHook(async (scanNode: IScanNode, next: Function) => {
