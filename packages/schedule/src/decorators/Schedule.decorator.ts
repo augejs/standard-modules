@@ -47,5 +47,5 @@ Schedule.defineMetadata = (value: ScheduleTask) => {
 }
 
 Schedule.getMetadata = (): ScheduleTask[]  => {
-  return Metadata.getMetadata(Schedule, Schedule);
+  return Metadata.getMetadata(Schedule, Schedule) || [];
 }
