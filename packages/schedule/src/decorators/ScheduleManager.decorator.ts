@@ -7,7 +7,6 @@ import {
 } from '@augejs/module-core';
 
 import { CronJob } from 'cron';
-
 import { Schedule } from './Schedule.decorator';
 
 const SCHEDULE_IDENTIFIER = 'schedule';
@@ -20,9 +19,7 @@ export function ScheduleManager(): ClassDecorator {
       LifecycleOnAppDidReadyHook(
         async (scanNode: IScanNode, next: Function) => {
           await next();
-
           const cronJobs: CronJob[] = [];
-
           for (const task of Schedule.getMetadata()) {
             const instance: any = task.scanNode.instance;
             if (!instance) continue;
