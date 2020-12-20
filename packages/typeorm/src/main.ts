@@ -27,6 +27,8 @@ export function Typeorm(opts?: ConnectionOptions | ConnectionOptions[]): ClassDe
           // connections.push(connection);
           await createConnection(config);
         }
+
+        await next();
         // scanNode.context.container.bind(TYPE_ORM_IDENTIFIER).toConstantValue(connections);
       }),
 
