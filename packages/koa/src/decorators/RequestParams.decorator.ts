@@ -31,12 +31,18 @@ RequestParams.Cookies = ():ParameterDecorator => {
   return RequestParams((context: IKoaContext) => context.cookies);
 }
 
-RequestParams.Header = (key?: string):ParameterDecorator => {
+RequestParams.Header = (key?: string | string[]):ParameterDecorator => {
   return RequestParams((context: IKoaContext) => {
-    if (key) {
-      return  context.header[key];
+    const header = context.header;
+    if (Array.isArray(key)) {
+      return key.reduce<any>((results: any, currentKey: string) => {
+        results[currentKey] = header?.[currentKey];
+      }, {});
+    } else if (typeof key === 'string') {
+      return header[key];
     }
-    return context.header;
+
+    return header;
   });
 }
 RequestParams.Host = ():ParameterDecorator => {
@@ -47,21 +53,46 @@ RequestParams.Hostname = ():ParameterDecorator => {
   return RequestParams((context: IKoaContext) => context.hostname);
 }
 
-RequestParams.Query = (key?: string):ParameterDecorator => {
+RequestParams.Query = (key?: string | string[]):ParameterDecorator => {
   return RequestParams((context: IKoaContext) => {
-    if (key) {
-      return context.query[key];
+    const query = context.query;
+    if (Array.isArray(key)) {
+      return key.reduce<any>((results: any, currentKey: string) => {
+        results[currentKey] = query?.[currentKey];
+      }, {});
+    } else if (typeof key === 'string') {
+      return query?.[key];
     } 
-    return context.query;
+    return query;
   });
 }
 
-RequestParams.Body = (key?: string):ParameterDecorator => {
+RequestParams.Body = (key?: string | string[]):ParameterDecorator => {
   return RequestParams((context: IKoaContext) => {
-    if (key) {
-      return (context.request as any).body?.[key];
-    } 
-    return (context.request as any).body
+    const body = (context.request as any).body;
+    if (Array.isArray(key)) {
+      return key.reduce<any>((results: any, currentKey: string) => {
+        results[currentKey] = body?.[currentKey];
+      }, {});
+    } else if (typeof key === 'string') {
+      return body?.[key];
+    }
+
+    return body
+  });
+}
+
+RequestParams.Params = (key?: string | string[]):ParameterDecorator => {
+  return RequestParams((context: IKoaContext) => {
+    const params = context.params;
+    if (Array.isArray(key)) {
+      return key.reduce<any>((results: any, currentKey: string)=>{
+        results[currentKey] = params?.[currentKey];
+      }, {});
+    } else if (typeof key === 'string') {
+      return params?.[key];
+    }
+    return params;
   });
 }
 
