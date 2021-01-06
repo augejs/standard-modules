@@ -39,6 +39,6 @@
     "typescript": "^4.0.2"
   },
   "dependencies": {
-    "@augejs/module-core": "^1.0.1-rc.6"
+    "@augejs/module-core": "1.0.1-rc.11"
   }
 }

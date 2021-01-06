@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs';
-import { Metadata, IScanNode, ScanHook, Config } from '@augejs/module-core';
+import { Metadata, IScanNode, ScanHook, Config, __appRootDir } from '@augejs/module-core';
 import yaml from 'js-yaml';
 import properties from 'properties';
 import {createIntl, createIntlCache, IntlShape, CustomFormats, OnErrorFn } from '@formatjs/intl'
@@ -48,7 +48,7 @@ export function I18n(opts?: I18nOptions): ClassDecorator {
     Metadata.decorate([
       Config({
         [ConfigName]: {
-          root: path.join(process.cwd(), 'locales'),
+          root: path.join(__appRootDir, 'locales'),
           defaultLocale: 'en',
           formats: null,
           messages: null,
