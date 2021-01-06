@@ -1,6 +1,6 @@
 {
   "name": "@augejs/views",
-  "version": "1.0.1-rc.7",
+  "version": "1.0.1-y.0",
   "description": "",
   "main": "./dist/main.js",
   "scripts": {
