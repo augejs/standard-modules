@@ -6,7 +6,7 @@
     "init:node_modules": "lerna bootstrap",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
     "build": "lerna run build",
-    "publish": "lerna publish",
+    "publish": "lerna publish --skip-git",
     "publish:canary": "lerna publish --canary",
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",
