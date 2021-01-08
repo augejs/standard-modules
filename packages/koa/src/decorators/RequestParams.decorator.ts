@@ -9,7 +9,7 @@ export function RequestParams(processor: (input: any) => any | void | Promise<an
 }
 
 RequestParams.defineMetadata = (target: Object, reducer: Function, propertyKey: string | symbol, parameterIndex: number) => {
-  Metadata.defineInsertEndArrayMetadata(propertyKey, [ reducer ], target, parameterIndex.toString());
+  Metadata.defineInsertBeginArrayMetadata(propertyKey, [ reducer ], target, parameterIndex.toString());
 }
 
 RequestParams.getMetadata = (target: Object, propertyKey: string | symbol, parameterIndex: number): Function[] => {
