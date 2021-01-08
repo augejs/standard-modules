@@ -1,4 +1,5 @@
 import { Metadata } from '@augejs/module-core';
+import { transformAndValidate, ClassType, TransformValidationOptions } from 'class-transformer-validator';
 import { IKoaContext } from '../interfaces';
 
 export function RequestParams(processor: (input: any) => any | void | Promise<any | void>):ParameterDecorator {
@@ -17,6 +18,12 @@ RequestParams.getMetadata = (target: Object, propertyKey: string | symbol, param
 
 RequestParams.Context = ():ParameterDecorator => {
   return RequestParams((context: IKoaContext) => context);
+}
+
+RequestParams.Validate = (classType: ClassType<any>, options?: TransformValidationOptions):ParameterDecorator => {
+  return RequestParams((data: any) => {
+    return transformAndValidate(classType, data, options);
+  });
 }
 
 RequestParams.Request = ():ParameterDecorator => {
