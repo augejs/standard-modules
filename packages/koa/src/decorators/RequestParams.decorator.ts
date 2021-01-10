@@ -19,7 +19,7 @@ RequestParams.getMetadata = (target: Object, propertyKey: string | symbol, param
 RequestParams.Context = ():ParameterDecorator => {
   return RequestParams((context: IKoaContext) => context);
 }
-RequestParams.Custom = (custom: Function):ParameterDecorator => {
+RequestParams.Custom = (custom: (context: IKoaContext) => any):ParameterDecorator => {
   return RequestParams((context: IKoaContext) => {
     return custom(context) || context;
   });
@@ -43,7 +43,7 @@ RequestParams.Cookies = ():ParameterDecorator => {
   return RequestParams((context: IKoaContext) => context.cookies);
 }
 
-RequestParams.Header = (key?: string | string[] | Function):ParameterDecorator => {
+RequestParams.Header = (key?: string | string[] | RequestParamsFunction):ParameterDecorator => {
   return RequestParams((context: IKoaContext) => {
     const header = context.header;
     if (Array.isArray(key)) {
@@ -53,7 +53,7 @@ RequestParams.Header = (key?: string | string[] | Function):ParameterDecorator =
     } else if (typeof key === 'string') {
       return header[key];
     } else if (typeof key === 'function') {
-      return key(header) || header;
+      return key(header, context) || header;
     }
 
     return header;
@@ -67,7 +67,9 @@ RequestParams.Hostname = ():ParameterDecorator => {
   return RequestParams((context: IKoaContext) => context.hostname);
 }
 
-RequestParams.Query = (key?: string | string[] | Function):ParameterDecorator => {
+type RequestParamsFunction = (value: any, context?: IKoaContext) => any;
+
+RequestParams.Query = (key?: string | string[] | RequestParamsFunction):ParameterDecorator => {
   return RequestParams((context: IKoaContext) => {
     const query = context.query;
     if (Array.isArray(key)) {
@@ -77,13 +79,13 @@ RequestParams.Query = (key?: string | string[] | Function):ParameterDecorator =>
     } else if (typeof key === 'string') {
       return query?.[key];
     } else if (typeof key === 'function') {
-      return key(query) || query;
+      return key(query, context) || query;
     }
     return query;
   });
 }
 
-RequestParams.Body = (key?: string | string[] | Function):ParameterDecorator => {
+RequestParams.Body = (key?: string | string[] | RequestParamsFunction):ParameterDecorator => {
   return RequestParams((context: IKoaContext) => {
     const body = (context.request as any).body;
     if (Array.isArray(key)) {
@@ -93,14 +95,14 @@ RequestParams.Body = (key?: string | string[] | Function):ParameterDecorator => 
     } else if (typeof key === 'string') {
       return body?.[key];
     } else if (typeof key === 'function') {
-      return key(body) || body;
+      return key(body, context) || body;
     }
 
     return body;
   });
 }
 
-RequestParams.Params = (key?: string | string[] | Function):ParameterDecorator => {
+RequestParams.Params = (key?: string | string[] | RequestParamsFunction):ParameterDecorator => {
   return RequestParams((context: IKoaContext) => {
     const params = context.params;
     if (Array.isArray(key)) {
@@ -110,7 +112,7 @@ RequestParams.Params = (key?: string | string[] | Function):ParameterDecorator =
     } else if (typeof key === 'string') {
       return params?.[key];
     } else if (typeof key === 'function') {
-      return key(params) || params;
+      return key(params, context) || params;
     }
     return params;
   });
