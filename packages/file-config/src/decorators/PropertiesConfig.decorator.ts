@@ -1,9 +1,12 @@
 import fs from 'fs';
-import { ConfigLoader, IScanNode } from '@augejs/module-core';
+import path from 'path';
+
+import { ConfigLoader, IScanNode, __appRootDir } from '@augejs/module-core';
 import properties from 'properties';
 
 // https://github.com/gagle/node-properties#parse
-export function PropertiesConfig(filePath: string, 
+
+export function PropertiesConfig(filePath: string = process.env.APP_CONFIG_PATH || path.join(__appRootDir, 'config/app.properties'), 
   opts?: {
     processor?: (result: any, scanNode: IScanNode) => any | void | Promise<any| void>
   }) :ClassDecorator {

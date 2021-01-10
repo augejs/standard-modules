@@ -1,8 +1,9 @@
 import yaml from 'js-yaml';
 import fs from 'fs';
-import { ConfigLoader, IScanNode } from '@augejs/module-core';
+import { ConfigLoader, IScanNode, __appRootDir } from '@augejs/module-core';
+import path from 'path';
 
-export function YAMLConfig(filePath: string, 
+export function YAMLConfig(filePath: string = process.env.APP_CONFIG_PATH || path.join(__appRootDir, 'config/app.yml'), 
   opts?: {
     processor?: (result: any, scanNode: IScanNode) => any | void | Promise<any| void> 
   }) :ClassDecorator {

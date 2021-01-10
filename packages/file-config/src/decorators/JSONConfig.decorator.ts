@@ -1,7 +1,9 @@
 import fs from 'fs';
-import { ConfigLoader, IScanNode } from '@augejs/module-core';
+import path from 'path';
 
-export function JSONConfig(filePath: string,
+import { ConfigLoader, IScanNode, __appRootDir } from '@augejs/module-core';
+
+export function JSONConfig(filePath: string = process.env.APP_CONFIG_PATH || path.join(__appRootDir, 'config/app.json'),
   opts?: {
     processor?: (result: any, scanNode: IScanNode) => any | void | Promise<any| void>
   }) :ClassDecorator {
