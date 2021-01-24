@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import { Metadata, IScanNode, ScanHook } from '@augejs/module-core';
+import { Metadata, IScanNode, ScanHook } from '@augejs/core';
 import Mail from 'nodemailer/lib/mailer';
 
 export {

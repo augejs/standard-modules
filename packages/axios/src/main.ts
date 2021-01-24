@@ -1,4 +1,4 @@
-import { Config, Metadata, ScanHook, IScanNode } from '@augejs/module-core';
+import { Config, Metadata, ScanHook, IScanNode } from '@augejs/core';
 
 import Axios, { AxiosRequestConfig } from 'axios';
 

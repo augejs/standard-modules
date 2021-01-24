@@ -2,7 +2,7 @@ import consolidate from 'consolidate';
 import { minify as htmlMinify } from 'html-minifier';
 import path from 'path';
 import fs from 'fs';
-import { Metadata, IScanNode, ScanHook, Config, __appRootDir } from '@augejs/module-core';
+import { Metadata, IScanNode, ScanHook, Config, __appRootDir } from '@augejs/core';
 
 export const ConfigName = 'views';
 export const VIEWS_IDENTIFIER= Symbol.for(ConfigName);

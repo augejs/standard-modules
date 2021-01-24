@@ -12,7 +12,7 @@ npm install @augejs/schedule
 ## Usage
 
 ```typescript
-import { Application, Logger, ILogger, ConsoleLogTransport, boot, GetLogger , Config} from '@augejs/module-core';
+import { Application, Logger, ILogger, ConsoleLogTransport, boot, GetLogger , Config} from '@augejs/core';
 import { ScheduleModule, Schedule } from './main';
 
 Logger.addTransport(new ConsoleLogTransport());

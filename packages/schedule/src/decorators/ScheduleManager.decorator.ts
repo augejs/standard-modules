@@ -4,7 +4,7 @@ import {
   Metadata, 
   LifecycleOnAppDidReadyHook, 
   Logger 
-} from '@augejs/module-core';
+} from '@augejs/core';
 
 import { CronJob } from 'cron';
 import { Schedule } from './Schedule.decorator';

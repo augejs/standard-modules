@@ -1,4 +1,4 @@
-import { Metadata, ScanHook, IScanNode } from '@augejs/module-core';
+import { Metadata, ScanHook, IScanNode } from '@augejs/core';
 
 export enum HttpMethodEnum {
   ALL = 0,

@@ -28,8 +28,8 @@
     "rimraf": "^3.0.2"
   },
   "dependencies": {
-    "@types/js-yaml": "^3.12.5",
-    "js-yaml": "^3.14.0",
+    "@types/js-yaml": "^4.0.0",
+    "js-yaml": "^4.0.0",
     "properties": "^1.2.1"
   }
 }

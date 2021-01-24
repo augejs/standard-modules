@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-import { ConfigLoader, IScanNode, __appRootDir } from '@augejs/module-core';
+import { ConfigLoader, IScanNode, __appRootDir } from '@augejs/core';
 import properties from 'properties';
 
 // https://github.com/gagle/node-properties#parse

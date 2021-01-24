@@ -1,5 +1,5 @@
 import IORedis, { Commands } from 'ioredis';
-import { Metadata, LifecycleOnInitHook, IScanNode, ScanHook, Logger, LifecycleOnAppWillCloseHook } from '@augejs/module-core';
+import { Metadata, LifecycleOnInitHook, IScanNode, ScanHook, Logger, LifecycleOnAppWillCloseHook } from '@augejs/core';
 import { EventEmitter } from 'events';
 
 export const ConfigName = 'redis';

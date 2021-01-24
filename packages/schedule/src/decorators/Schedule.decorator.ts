@@ -1,4 +1,4 @@
-import { IScanNode, Metadata, ScanHook } from '@augejs/module-core';
+import { IScanNode, Metadata, ScanHook } from '@augejs/core';
 
 /**
  * 

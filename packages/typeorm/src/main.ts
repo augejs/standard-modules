@@ -1,5 +1,5 @@
 import { createConnection, createConnections, ConnectionOptions } from "typeorm"
-import { Metadata, ScanHook, IScanNode } from '@augejs/module-core'
+import { Metadata, ScanHook, IScanNode } from '@augejs/core'
 
 const ConfigName = 'typeorm';
 // const TYPE_ORM_IDENTIFIER = Symbol.for(ConfigName);

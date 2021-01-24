@@ -1,4 +1,4 @@
-import { Config, Metadata, ScanHook, IScanNode, LifecycleOnInitHook, LogLevel, ILogTransport, ILogItem, Logger, LifecycleOnAppWillCloseHook } from '@augejs/module-core';
+import { Config, Metadata, ScanHook, IScanNode, LifecycleOnInitHook, LogLevel, ILogTransport, ILogItem, Logger, LifecycleOnAppWillCloseHook } from '@augejs/core';
 import log4js, { Logger as Log4JsLogger } from 'log4js';
 
 export const ConfigName = 'log4js';

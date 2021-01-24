@@ -1,4 +1,4 @@
-import { Metadata } from '@augejs/module-core';
+import { Metadata } from '@augejs/core';
 
 export function Prefix(path?:string): ClassDecorator {
   return (target: Function) => {

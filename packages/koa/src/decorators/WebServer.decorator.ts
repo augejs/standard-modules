@@ -11,7 +11,7 @@ import {
   Logger, 
   Metadata, 
   ScanHook 
-} from "@augejs/module-core";
+} from "@augejs/core";
 
 import { IKoaApplication } from '../interfaces';
 

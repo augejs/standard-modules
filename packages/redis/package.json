@@ -22,8 +22,8 @@
     "access": "public"
   },
   "dependencies": {
-    "@types/ioredis": "^4.14.6",
-    "ioredis": "^4.17.3"
+    "@types/ioredis": "^4.19.2",
+    "ioredis": "^4.19.4"
   },
   "devDependencies": {
     "rimraf": "^3.0.2"

@@ -1,4 +1,4 @@
-import { Metadata, ScanHook, IScanNode, Injectable, Name, LifecycleOnInitHook } from '@augejs/module-core';
+import { Metadata, ScanHook, IScanNode, Injectable, Name, LifecycleOnInitHook } from '@augejs/core';
 
 export type MiddlewareMetadata = {
   scanNode: IScanNode

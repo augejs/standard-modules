@@ -3,7 +3,7 @@ import Application, { Context } from 'koa';
 
 import { 
   IScanContext, 
-} from "@augejs/module-core";
+} from "@augejs/core";
 
 export interface IKoaApplication extends Application {
   router: Router

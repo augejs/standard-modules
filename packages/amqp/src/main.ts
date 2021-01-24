@@ -1,5 +1,5 @@
 
-import { Config, Metadata, ScanHook, IScanNode, LifecycleOnInitHook, Logger, LifecycleOnAppWillCloseHook } from '@augejs/module-core'
+import { Config, Metadata, ScanHook, IScanNode, LifecycleOnInitHook, Logger, LifecycleOnAppWillCloseHook } from '@augejs/core'
 import amqpConnectionManager, { 
   AmqpConnectionManager, 
   AmqpConnectionManagerOptions 

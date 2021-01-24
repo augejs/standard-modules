@@ -1,4 +1,4 @@
-import { Metadata } from '@augejs/module-core';
+import { Metadata } from '@augejs/core';
 import { transformAndValidate, ClassType, TransformValidationOptions } from 'class-transformer-validator';
 import { IKoaContext } from '../interfaces';
 

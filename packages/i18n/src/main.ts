@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs';
-import { Metadata, IScanNode, ScanHook, Config, __appRootDir } from '@augejs/module-core';
+import { Metadata, IScanNode, ScanHook, Config, __appRootDir } from '@augejs/core';
 import yaml from 'js-yaml';
 import properties from 'properties';
 import {createIntl, createIntlCache, IntlShape, CustomFormats, OnErrorFn } from '@formatjs/intl'
@@ -87,7 +87,7 @@ export function I18n(opts?: I18nOptions): ClassDecorator {
               } else if (fileExtName === '.properties') {
                 localeMessages = properties.parse(fileContent);
               } else if (fileExtName === '.yml' || fileExtName === '.yaml') {
-                localeMessages = yaml.safeLoad(fileContent) as Record<string, string>;
+                localeMessages = yaml.load(fileContent) as Record<string, string>;
               }
 
               if (!localeMessages) continue;

@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-import { ConfigLoader, IScanNode, __appRootDir } from '@augejs/module-core';
+import { ConfigLoader, IScanNode, __appRootDir } from '@augejs/core';
 
 export function JSONConfig(filePath: string = process.env.APP_CONFIG_PATH || path.join(__appRootDir, 'config/app.json'),
   opts?: {
