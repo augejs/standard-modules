@@ -10,7 +10,7 @@ export {
 
 export const ConfigName = 'mail';
 
-const MAIL_IDENTIFIER = Symbol.for(ConfigName);
+export const MAIL_IDENTIFIER = Symbol.for(ConfigName);
 
 export function MailTransport(opts?: any): ClassDecorator {
   return function(target: Function) {
