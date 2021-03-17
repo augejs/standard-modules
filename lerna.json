@@ -1,6 +1,9 @@
 {
   "npmClient": "npm",
   "command": {
+    "bootstrap": {
+      "hoist": true
+    },
     "publish": {
       "ignoreChanges": [
         "**/*.md",

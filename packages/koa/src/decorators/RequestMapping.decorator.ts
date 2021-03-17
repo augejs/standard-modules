@@ -73,6 +73,7 @@ const createRequestMappingDecorator = (method: HttpMethodEnum) => {
 };
 
 const Get = createRequestMappingDecorator(HttpMethodEnum.GET);
+const Put = createRequestMappingDecorator(HttpMethodEnum.PUT);
 const Post = createRequestMappingDecorator(HttpMethodEnum.POST);
 const Delete = createRequestMappingDecorator(HttpMethodEnum.DELETE);
 const Patch = createRequestMappingDecorator(HttpMethodEnum.PATCH);
@@ -81,6 +82,7 @@ const Head = createRequestMappingDecorator(HttpMethodEnum.HEAD);
 const All = createRequestMappingDecorator(HttpMethodEnum.ALL);
 
 RequestMapping.Get = Get;
+RequestMapping.Get = Put;
 RequestMapping.Post = Post;
 RequestMapping.Delete = Delete;
 RequestMapping.Patch = Patch;
