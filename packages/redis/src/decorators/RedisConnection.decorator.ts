@@ -19,10 +19,7 @@ export function RedisConnection(opts?: any): ClassDecorator {
             ...opts
           }
           const startupNodes:[] = config?.startupNodes;
-          let redis: Commands | null = null;
-          let redisSubscriber: Commands | null = null;
-
-          const messageNotificationMetadataList = SubscribeMessage.getMetadata();
+          let redis: Redis | IORedis.Cluster | null = null;
 
           if (startupNodes && startupNodes.length > 0) {
             redis = new IORedis.Cluster(startupNodes, {
@@ -32,31 +29,14 @@ export function RedisConnection(opts?: any): ClassDecorator {
                 lazyConnect: true,
               }
             });
-
-            if (messageNotificationMetadataList.length > 0) {
-              redisSubscriber = new IORedis.Cluster(startupNodes, {
-                ...config,
-                redisOptions: {
-                  ...config?.redisOptions,
-                  lazyConnect: true,
-                }
-              });
-            }
           } else {
             redis = new IORedis({
               ...config,
               lazyConnect: true,
             });
-            scanNode.context.container.bind(REDIS_IDENTIFIER).toConstantValue(redis);
-
-            if (messageNotificationMetadataList.length > 0) {
-              redisSubscriber = new IORedis({
-                ...config,
-                lazyConnect: true,
-              });
-            }
           }
-          scanNode.context.container.bind(REDIS_SUBSCRIBER_IDENTIFIER).toConstantValue(redisSubscriber);
+
+          scanNode.context.container.bind(REDIS_IDENTIFIER).toConstantValue(redis);
 
           await next();
         }
@@ -67,15 +47,42 @@ export function RedisConnection(opts?: any): ClassDecorator {
           const redis: Redis = scanNode.context.container.get<Redis>(REDIS_IDENTIFIER);
           redis && await redis.connect();
 
-          const redisSubscriber: Redis = scanNode.context.container.get<Redis>(REDIS_SUBSCRIBER_IDENTIFIER);
-          redisSubscriber && await redisSubscriber.connect();
+          const config: any = {
+            ...scanNode.context.rootScanNode?.getConfig(ConfigName),
+            ...scanNode.getConfig(ConfigName),
+            ...opts
+          }
+
+          const startupNodes:[] = config?.startupNodes;
+
+          let redisSubscriber: Redis | IORedis.Cluster | null;
+          const subscribers = SubscribeMessage.getMetadata();
+          if (subscribers.length > 0) {
+            if (startupNodes && startupNodes.length > 0) {
+              redisSubscriber = new IORedis.Cluster(startupNodes, {
+                ...config,
+                redisOptions: {
+                  ...config?.redisOptions,
+                  lazyConnect: true,
+                }
+              });
+            } else {
+              redisSubscriber = new IORedis({
+                ...config,
+                lazyConnect: true,
+              });
+            }
+
+            redisSubscriber && await redisSubscriber.connect();
+            scanNode.context.container.bind(REDIS_SUBSCRIBER_IDENTIFIER).toConstantValue(redisSubscriber);
+          }
           
           await next();
         }
       ),
 
       LifecycleOnAppDidReadyHook(async (scanNode: IScanNode, next: Function) => {
-        const redisSubscriber: Redis = scanNode.context.container.get<Redis>(REDIS_SUBSCRIBER_IDENTIFIER);
+        const redisSubscriber: Redis | IORedis.Cluster | null = scanNode.context.container.get<Redis>(REDIS_SUBSCRIBER_IDENTIFIER);
         if (redisSubscriber) {
           const subscribers = SubscribeMessage.getMetadata();
 
@@ -100,7 +107,7 @@ export function RedisConnection(opts?: any): ClassDecorator {
           const redis: Redis = scanNode.context.container.get<Redis>(REDIS_IDENTIFIER);
           redis && await redis.disconnect();
 
-          const redisSubscriber: Redis = scanNode.context.container.get<Redis>(REDIS_SUBSCRIBER_IDENTIFIER);
+          const redisSubscriber: Redis | IORedis.Cluster | null = scanNode.context.container.get<Redis|IORedis.Cluster>(REDIS_SUBSCRIBER_IDENTIFIER) || null;
           if (redisSubscriber) {
             redisSubscriber.removeAllListeners("message");
             await redisSubscriber.disconnect();
