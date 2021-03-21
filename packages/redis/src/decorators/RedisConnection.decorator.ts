@@ -2,10 +2,13 @@ import { IScanNode, LifecycleOnAppDidReadyHook, LifecycleOnAppWillCloseHook, Lif
 import { SubscribeMessage } from "./SubscribeMessage.decorator";
 import IORedis, { Commands, Redis } from "ioredis";
 
-import { ConfigName, REDIS_IDENTIFIER, REDIS_SUBSCRIBER_IDENTIFIER } from '../constant';
+export const ConfigName = 'redis';
+export const REDIS_IDENTIFIER = Symbol.for(ConfigName);
+export const REDIS_SUBSCRIBER_IDENTIFIER = Symbol.for(ConfigName + 'subscriber');
 
 export function RedisConnection(opts?: any): ClassDecorator {
   return function(target: Function) {
+
     Metadata.decorate([
 
       ScanHook(
@@ -44,6 +47,7 @@ export function RedisConnection(opts?: any): ClassDecorator {
               ...config,
               lazyConnect: true,
             });
+            scanNode.context.container.bind(REDIS_IDENTIFIER).toConstantValue(redis);
 
             if (messageNotificationMetadataList.length > 0) {
               redisSubscriber = new IORedis({
@@ -52,8 +56,6 @@ export function RedisConnection(opts?: any): ClassDecorator {
               });
             }
           }
-
-          scanNode.context.container.bind(REDIS_IDENTIFIER).toConstantValue(redis);
           scanNode.context.container.bind(REDIS_SUBSCRIBER_IDENTIFIER).toConstantValue(redisSubscriber);
 
           await next();

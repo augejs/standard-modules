@@ -1,6 +1,6 @@
 import { IScanNode } from "@augejs/core";
 import { Commands } from "ioredis";
-import { REDIS_IDENTIFIER } from '../constant';
+import { REDIS_IDENTIFIER } from './RedisConnection.decorator';
 
 const RedisLockPrefix = 'redisLock:';
 
