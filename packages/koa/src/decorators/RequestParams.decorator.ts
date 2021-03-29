@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/ban-types */
 import { Metadata } from '@augejs/core';
 import { transformAndValidate, ClassType, TransformValidationOptions } from 'class-transformer-validator';
 import { IKoaContext } from '../interfaces';
@@ -13,7 +15,7 @@ RequestParams.defineMetadata = (target: Object, reducer: Function, propertyKey: 
 }
 
 RequestParams.getMetadata = (target: Object, propertyKey: string | symbol, parameterIndex: number): Function[] => {
-  return Metadata.getMetadata(propertyKey, target, parameterIndex.toString()) || [];
+  return Metadata.getMetadata(propertyKey, target, parameterIndex.toString()) as Function[] || [];
 }
 
 RequestParams.Context = ():ParameterDecorator => {

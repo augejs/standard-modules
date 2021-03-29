@@ -1,6 +1,7 @@
 import nodemailer from 'nodemailer';
 import { Metadata, IScanNode, ScanHook } from '@augejs/core';
 import Mail from 'nodemailer/lib/mailer';
+import SMTPTransport from 'nodemailer/lib/smtp-transport';
 
 export {
   Mail
@@ -12,17 +13,20 @@ export const ConfigName = 'mail';
 
 export const MAIL_IDENTIFIER = Symbol.for(ConfigName);
 
-export function MailTransport(opts?: any): ClassDecorator {
-  return function(target: Function) {
+export function MailTransport(opts: SMTPTransport.Options): ClassDecorator {
+  return function(target: NewableFunction) {
     Metadata.decorate([
       ScanHook(
-        async (scanNode: IScanNode, next: Function) => {
-          const config: any = {
-            ...scanNode.context.rootScanNode?.getConfig(ConfigName),
-            ...scanNode.getConfig(ConfigName),
+        async (scanNode: IScanNode, next: CallableFunction) => {
+          const rootConfig: SMTPTransport.Options = scanNode.context.rootScanNode?.getConfig(ConfigName);
+          const nodeConfig: SMTPTransport.Options = scanNode.getConfig(ConfigName);
+
+          const mail = nodemailer.createTransport({
+            ...rootConfig,
+            ...nodeConfig,
             ...opts
-          }
-          const mail = nodemailer.createTransport(config);
+          });
+
           scanNode.context.container.bind(MAIL_IDENTIFIER).toConstantValue(mail);
           await next();
         }

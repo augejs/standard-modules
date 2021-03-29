@@ -7,9 +7,10 @@ interface Subscriber  {
 }
 
 export function SubscribeMessage(channel: string): MethodDecorator {
+  // eslint-disable-next-line @typescript-eslint/ban-types
   return (target:Object, propertyKey:string | symbol, descriptor: PropertyDescriptor) => {
     Metadata.decorate([
-      ScanHook(async (scanNode: IScanNode, next: Function) => {
+      ScanHook(async (scanNode: IScanNode, next: CallableFunction) => {
         SubscribeMessage.defineMetadata({
           scanNode,
           propertyKey,
@@ -28,5 +29,5 @@ SubscribeMessage.defineMetadata = (metadata: Subscriber) => {
 }
 
 SubscribeMessage.getMetadata = ():Subscriber[] => {
-  return Metadata.getMetadata(SubscribeMessage, SubscribeMessage) || [];
+  return Metadata.getMetadata(SubscribeMessage, SubscribeMessage) as Subscriber[] || [];
 }

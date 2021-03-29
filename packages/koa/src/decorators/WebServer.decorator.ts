@@ -41,7 +41,7 @@ type WebServerOptions = {
 }
 
 export function WebServer(opts?: WebServerOptions): ClassDecorator {
-  return function(target: Function) {
+  return function(target: NewableFunction) {
     Metadata.decorate([
       Config({
         [ConfigName]: {
@@ -54,12 +54,14 @@ export function WebServer(opts?: WebServerOptions): ClassDecorator {
         }
       }),
 
-      ScanHook(async (scanNode: IScanNode, next: Function) => {
+      ScanHook(async (scanNode: IScanNode, next: CallableFunction) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const config: any = {
           ...scanNode.context.rootScanNode!.getConfig(ConfigName),
           ...scanNode.getConfig(ConfigName),
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const koa: any = new Application();
         const router: Router = new Router({
           prefix: config.prefix,
@@ -73,10 +75,10 @@ export function WebServer(opts?: WebServerOptions): ClassDecorator {
         await next();
       }),
       Lifecycle__onAppReady__Hook(
-        async (scanNode: IScanNode, next: Function) => {
+        async (scanNode: IScanNode, next: CallableFunction) => {
           const koa: IKoaApplication = scanNode.context.container.get<IKoaApplication>(KOA_WEB_SERVER_IDENTIFIER);
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const config: any = scanNode.getConfig(ConfigName);
-
           koa.context.scanContext = scanNode.context;
 
           for (const metadata of RequestMapping.getMetadata()) {
@@ -90,7 +92,7 @@ export function WebServer(opts?: WebServerOptions): ClassDecorator {
           .use(koa.router.allowedMethods());
 
           const { host, port } = config;
-          await new Promise((resolve: Function) => {
+          await new Promise((resolve: CallableFunction) => {
             koa.listen(port, host, () => {
               resolve();
             })
@@ -103,7 +105,7 @@ export function WebServer(opts?: WebServerOptions): ClassDecorator {
 }
 
 function getRequestMethodByHttpMethodEnum(method: HttpMethodEnum) {
-  let requestMethod:string = '';
+  let requestMethod = '';
   switch(method) {
     case HttpMethodEnum.GET:
       requestMethod = 'get';
@@ -134,14 +136,15 @@ function getRequestMethodByHttpMethodEnum(method: HttpMethodEnum) {
 }
 
 async function buildRouteByRequestMappingMetadata(router: Router, metadata: RequestMappingMetadata) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const instance: any = metadata.scanNode.instance;
   if (!instance) return;
 
-  const instanceMethod: Function | null = instance[metadata.propertyKey] || null;
+  const instanceMethod: CallableFunction | null = instance[metadata.propertyKey] || null;
   if (!instanceMethod) return;
 
   const prefixPaths: string[] = [];
-  const prefixMiddlewareList: Function[] = [];
+  const prefixMiddlewareList: CallableFunction[] = [];
 
   await hookUtil.traceTreeNodeHook(
     metadata.scanNode, 
@@ -154,10 +157,9 @@ async function buildRouteByRequestMappingMetadata(router: Router, metadata: Requ
         if (middlewareMetadata.propertyKey) return;
         prefixMiddlewareList.push(...middlewareMetadata.hooks);
       })
-
       return null
     }, hookUtil.sequenceHooks
-  )(null);
+  )(null, hookUtil.noopNext);
 
   const prefixPath:string = path.join('/', ...prefixPaths.reverse());
   const routePaths:string[] = metadata.paths.map((routePath:string) => {
@@ -166,7 +168,7 @@ async function buildRouteByRequestMappingMetadata(router: Router, metadata: Requ
 
   if (routePaths.length === 0) return;
   const requestMethod:string = getRequestMethodByHttpMethodEnum(metadata.method);
-  const methodMiddlewareList:Function[] = [];
+  const methodMiddlewareList:CallableFunction[] = [];
   Middleware.getMetadata(metadata.scanNode.provider).forEach((middlewareMetadata: MiddlewareMetadata) => {
     if (!middlewareMetadata.propertyKey) return;
     if (middlewareMetadata.propertyKey !== metadata.propertyKey) return;
@@ -180,12 +182,15 @@ async function buildRouteByRequestMappingMetadata(router: Router, metadata: Requ
     ...methodMiddlewareList,
     async (context: Context)=> {
       // process args
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const methodActualArgs:any[] = [];
       if (instanceMethod.length > 0) {
-        for (let idx:number = 0; idx < instanceMethod.length; idx++) {
-          const argsFns:Function[] = RequestParams.getMetadata(metadata.scanNode.provider, metadata.propertyKey, idx);
+        for (let idx = 0; idx < instanceMethod.length; idx++) {
+          const argsFns:CallableFunction[] = RequestParams.getMetadata(metadata.scanNode.provider, metadata.propertyKey, idx);
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           let argsResult:any = context;
           for (const argsFn of argsFns) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             let currentArgsResult: any = argsFn(argsResult);
             if (currentArgsResult === undefined) continue;
             if (typeof currentArgsResult?.then === 'function') {
@@ -196,8 +201,8 @@ async function buildRouteByRequestMappingMetadata(router: Router, metadata: Requ
           methodActualArgs.push(argsResult);
         }
       }
-
-      const result:any = await (instance[metadata.propertyKey] as Function)(...methodActualArgs);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const result:any = await (instance[metadata.propertyKey] as CallableFunction)(...methodActualArgs);
       if (result !== undefined) {
         context.body = result;
       }

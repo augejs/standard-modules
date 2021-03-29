@@ -9,7 +9,7 @@ export enum HttpMethodEnum {
   PATCH,
   OPTIONS,
   HEAD,
-};
+}
 
 export interface IRequestMappingOptions {
   path?: string,
@@ -24,6 +24,7 @@ export type RequestMappingMetadata = {
 }
 
 export function RequestMapping(options?:IRequestMappingOptions | string): MethodDecorator {
+  // eslint-disable-next-line @typescript-eslint/ban-types
   return (target:Object, propertyKey:string | symbol, descriptor: PropertyDescriptor) => {
 
     const method:HttpMethodEnum = (typeof options === 'string' ? HttpMethodEnum.GET : options?.method) || HttpMethodEnum.GET;
@@ -38,7 +39,7 @@ export function RequestMapping(options?:IRequestMappingOptions | string): Method
     }).filter(Boolean);
 
     Metadata.decorate([
-      ScanHook(async (scanNode: IScanNode, next: Function)=> {
+      ScanHook(async (scanNode: IScanNode, next: CallableFunction)=> {
         const metadata: RequestMappingMetadata = {
           scanNode,
           propertyKey,
@@ -53,14 +54,14 @@ export function RequestMapping(options?:IRequestMappingOptions | string): Method
 
     return descriptor;
   }
-};
+}
 
 RequestMapping.defineMetadata = (metadata:RequestMappingMetadata) => {
   Metadata.defineInsertEndArrayMetadata(RequestMapping, [ metadata ], RequestMapping);
 }
 
 RequestMapping.getMetadata = ():RequestMappingMetadata[] => {
-  return Metadata.getMetadata(RequestMapping, RequestMapping) || [];
+  return Metadata.getMetadata(RequestMapping, RequestMapping) as RequestMappingMetadata[] || [];
 }
 
 const createRequestMappingDecorator = (method: HttpMethodEnum) => {

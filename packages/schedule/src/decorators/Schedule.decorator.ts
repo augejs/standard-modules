@@ -19,10 +19,11 @@ import { IScanNode, Metadata, ScanHook } from '@augejs/core';
 
 // Module, Service method only. method will execute after app start.
 
-export function Schedule(cron:string | Function):MethodDecorator {
+export function Schedule(cron:string | CallableFunction):MethodDecorator {
+  // eslint-disable-next-line @typescript-eslint/ban-types
   return (target: Object, propertyKey: string | symbol, descriptor: PropertyDescriptor) => {
     Metadata.decorate([
-      ScanHook(async (scanNode: IScanNode, next: Function) => {
+      ScanHook(async (scanNode: IScanNode, next: CallableFunction) => {
         Schedule.defineMetadata({
           scanNode,
           propertyKey,
@@ -38,7 +39,7 @@ export function Schedule(cron:string | Function):MethodDecorator {
 
 export type ScheduleTask = {
   scanNode: IScanNode,
-  cron: string | Function,
+  cron: string | CallableFunction,
   propertyKey: string | symbol
 }
 
@@ -47,5 +48,5 @@ Schedule.defineMetadata = (value: ScheduleTask) => {
 }
 
 Schedule.getMetadata = (): ScheduleTask[]  => {
-  return Metadata.getMetadata(Schedule, Schedule) || [];
+  return Metadata.getMetadata(Schedule, Schedule) as ScheduleTask[] || [];
 }

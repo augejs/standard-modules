@@ -8,9 +8,10 @@ export * from 'typeorm';
 
 // https://typeorm.io/#/connection
 export function Typeorm(opts?: ConnectionOptions | ConnectionOptions[]): ClassDecorator {
-  return function(target: Function) {
+  return function(target: NewableFunction) {
     Metadata.decorate([
-      ScanHook(async (scanNode: IScanNode, next: Function) => {
+      ScanHook(async (scanNode: IScanNode, next: CallableFunction) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const config: any = {
           ...scanNode.context.rootScanNode!.getConfig(ConfigName),
           ...scanNode.getConfig(ConfigName),

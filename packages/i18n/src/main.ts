@@ -13,10 +13,12 @@ export interface II18n<T=string> extends IntlShape<T> {
   get(locale: string): IntlShape<T>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function flattening(data:any) {
   const result = {};
   function deepFlat(data, keys: string) {
     Object.keys(data).forEach(function (key) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const value: any = data[key];
       const k = keys ? keys + '.' + key : key;
       if (Object.prototype.toString.call(value) === '[object Object]') {
@@ -39,12 +41,12 @@ interface I18nOptions {
   formats?: CustomFormats
   messages?: Record<string, string>
   defaultFormats?: CustomFormats
-  defaultRichTextElements?: Record<string, any>
+  defaultRichTextElements?: Record<string, unknown>
   onError?: OnErrorFn
 }
 
 export function I18n(opts?: I18nOptions): ClassDecorator {
-  return function(target: Function) {
+  return function(target: NewableFunction) {
     Metadata.decorate([
       Config({
         [ConfigName]: {
@@ -58,7 +60,8 @@ export function I18n(opts?: I18nOptions): ClassDecorator {
         }
       }),
       ScanHook(
-        async (scanNode: IScanNode, next: Function) => {
+        async (scanNode: IScanNode, next: CallableFunction) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const config: any = {
             ...scanNode.context.rootScanNode?.getConfig(ConfigName),
             ...scanNode.getConfig(ConfigName),
@@ -68,6 +71,7 @@ export function I18n(opts?: I18nOptions): ClassDecorator {
           const localeDir: string = config.root;
           let defaultLocale: string = config.defaultLocale || 'en';
 
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const intlMap: Record<string, IntlShape<any>> = {};
 
           if (fs.existsSync(localeDir)) {
@@ -110,7 +114,7 @@ export function I18n(opts?: I18nOptions): ClassDecorator {
 
               intlMap[localeName] = intl;
             }
-          };
+          }
 
           const localNames = Object.keys(intlMap);
           if (localNames.length > 0) {
@@ -132,7 +136,7 @@ export function I18n(opts?: I18nOptions): ClassDecorator {
             );
           }
 
-          let defaultI18n = intlMap[defaultLocale];
+          const defaultI18n = intlMap[defaultLocale];
 
           for (const intl of Object.values(intlMap)) {
             Object.assign(intl, {
