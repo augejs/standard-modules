@@ -26,8 +26,8 @@
   },
   "dependencies": {
     "@types/amqp-connection-manager": "^2.0.10",
-    "amqp-connection-manager": "^3.2.1",
-    "amqplib": "^0.6.0"
+    "amqp-connection-manager": "^3.2.2",
+    "amqplib": "^0.7.1"
   },
   "devDependencies": {
     "rimraf": "^3.0.2"
