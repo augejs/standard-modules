@@ -1,6 +1,5 @@
 import { 
   ILogger, 
-  IScanNode, 
   Metadata, 
   LifecycleOnAppDidReadyHook, 
   Logger 
@@ -17,7 +16,7 @@ export function ScheduleManager(): ClassDecorator {
   return function(target: NewableFunction) {
     Metadata.decorate([
       LifecycleOnAppDidReadyHook(
-        async (scanNode: IScanNode, next: CallableFunction) => {
+        async (_, next: CallableFunction) => {
           await next();
           const cronJobs: CronJob[] = [];
           for (const task of Schedule.getMetadata()) {

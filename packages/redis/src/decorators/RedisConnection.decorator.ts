@@ -49,7 +49,7 @@ export function RedisConnection(opts?: unknown): ClassDecorator {
       LifecycleOnInitHook(
         async (scanNode: IScanNode, next: CallableFunction) => {
           const redis: Redis = scanNode.context.container.get<Redis>(REDIS_IDENTIFIER);
-          redis && await redis.connect();
+          await redis.connect();
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const config: any = {
             ...scanNode.context.rootScanNode?.getConfig(ConfigName),
@@ -87,23 +87,27 @@ export function RedisConnection(opts?: unknown): ClassDecorator {
       ),
 
       LifecycleOnAppDidReadyHook(async (scanNode: IScanNode, next: CallableFunction) => {
-        const redisSubscriber: Redis | IORedis.Cluster | null = scanNode.context.container.get<Redis>(REDIS_SUBSCRIBER_IDENTIFIER);
-        if (redisSubscriber) {
-          const subscribers = SubscribeMessage.getMetadata();
-
-          const channels = [...new Set(subscribers.map(subscriber => subscriber.channel))];
-          await redisSubscriber.subscribe(channels);
-
-          redisSubscriber.on('message', async (channel, message) => {
-            for (const subscriber of subscribers) {
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              const instance: any = subscriber.scanNode.instance;
-              if (!instance) continue;
-              if (typeof instance[subscriber.propertyKey] !== 'function') continue;
-              await instance[subscriber.propertyKey](channel, message);
-            }
-          })
+        if (!scanNode.context.container.isBound(REDIS_SUBSCRIBER_IDENTIFIER)) {
+          await next();
+          return;
         }
+
+        const redisSubscriber: Redis | IORedis.Cluster = scanNode.context.container.get<Redis>(REDIS_SUBSCRIBER_IDENTIFIER);
+
+        const subscribers = SubscribeMessage.getMetadata();
+
+        const channels = [...new Set(subscribers.map(subscriber => subscriber.channel))];
+        await redisSubscriber.subscribe(channels);
+
+        redisSubscriber.on('message', async (channel, message) => {
+          for (const subscriber of subscribers) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const instance: any = subscriber.scanNode.instance;
+            if (!instance) continue;
+            if (typeof instance[subscriber.propertyKey] !== 'function') continue;
+            await instance[subscriber.propertyKey](channel, message);
+          }
+        })
 
         await next();
       }),
@@ -111,13 +115,16 @@ export function RedisConnection(opts?: unknown): ClassDecorator {
       LifecycleOnAppWillCloseHook(
         async (scanNode: IScanNode, next: CallableFunction) => {
           const redis: Redis = scanNode.context.container.get<Redis>(REDIS_IDENTIFIER);
-          redis && await redis.disconnect();
-
-          const redisSubscriber: Redis | IORedis.Cluster | null = scanNode.context.container.get<Redis|IORedis.Cluster>(REDIS_SUBSCRIBER_IDENTIFIER) || null;
-          if (redisSubscriber) {
-            redisSubscriber.removeAllListeners("message");
-            await redisSubscriber.disconnect();
+          await redis.disconnect();
+          
+          if (!scanNode.context.container.isBound(REDIS_SUBSCRIBER_IDENTIFIER)) {
+            await next();
+            return;
           }
+
+          const redisSubscriber: Redis | IORedis.Cluster = scanNode.context.container.get<Redis|IORedis.Cluster>(REDIS_SUBSCRIBER_IDENTIFIER);
+          redisSubscriber.removeAllListeners("message");
+          await redisSubscriber.disconnect();
 
           await next();
         }
