@@ -1,11 +1,11 @@
 import { Config, Metadata, ScanHook, IScanNode, LifecycleOnInitHook, LogLevel, ILogTransport, ILogItem, Logger, LifecycleOnAppWillCloseHook } from '@augejs/core';
-import log4js, { Logger as Log4JsLogger } from 'log4js';
+import log4js, { Logger as Log4JsLogger, Configuration } from 'log4js';
 
 export const ConfigName = 'log4js';
 export const LOG4JS_IDENTIFIER = Symbol.for(ConfigName);
 
-export function Log4js(opts?: any): ClassDecorator {
-  return function(target: Function) {
+export function Log4js(opts?: Configuration): ClassDecorator {
+  return function(target: NewableFunction) {
     Metadata.decorate([
       Config({
         // https://log4js-node.github.io/log4js-node/file.html
@@ -20,8 +20,9 @@ export function Log4js(opts?: any): ClassDecorator {
         }
       }),
 
-      ScanHook(async (scanNode: IScanNode, next: Function) => {
-        const config: any = {
+      ScanHook(async (scanNode: IScanNode, next: CallableFunction) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const config: Configuration = {
           ...scanNode.context.rootScanNode!.getConfig(ConfigName),
           ...scanNode.getConfig(ConfigName),
         }
@@ -30,6 +31,7 @@ export function Log4js(opts?: any): ClassDecorator {
         
         const getLogger = log4js.getLogger;
         const log4jsCategories: Record<string, Log4JsLogger> = {};
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (log4js as any).getLogger = (category: string): Log4JsLogger => {
           if (log4jsCategories[category]) {
             return log4jsCategories[category];
@@ -44,7 +46,7 @@ export function Log4js(opts?: any): ClassDecorator {
       }),
 
       LifecycleOnInitHook(
-        async (scanNode: IScanNode, next: Function) => {
+        async (scanNode: IScanNode, next: CallableFunction) => {
           const log4jsLoggerTransport: ILogTransport = {
             printMessage(logItem:ILogItem) {
               const context:string = logItem.context;
@@ -88,8 +90,8 @@ export function Log4js(opts?: any): ClassDecorator {
       ),
 
       LifecycleOnAppWillCloseHook(
-        async (scanNode: IScanNode, next: Function) => {
-          await new Promise((resolve: Function, reject: Function) => {
+        async (scanNode: IScanNode, next: CallableFunction) => {
+          await new Promise((resolve: CallableFunction, reject: CallableFunction) => {
             log4js.shutdown((err) => {
               if (!err) {
                 resolve();

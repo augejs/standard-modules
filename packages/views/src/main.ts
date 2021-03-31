@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import consolidate from 'consolidate';
 import { minify as htmlMinify } from 'html-minifier';
 import path from 'path';
@@ -11,15 +12,15 @@ export const VIEWS_IDENTIFIER= Symbol.for(ConfigName);
 
 export type ViewOptions = {
   root?: string
-  state?: object
-  suffixAlias?: object
-  minifier?: boolean | object
+  state?: Record<string, unknown>
+  suffixAlias?: Record<string, unknown>
+  minifier?: boolean | Record<string, unknown>
 }
 
 export type RenderFunction = (filePath: string, state?: any) => Promise<string>;
 
 export function Views(opts?: ViewOptions): ClassDecorator {
-  return function(target: Function) {
+  return function(target: NewableFunction) {
     Metadata.decorate([
       Config({
         [ConfigName]: {
@@ -31,8 +32,8 @@ export function Views(opts?: ViewOptions): ClassDecorator {
         }
       }),
       ScanHook(
-        async (scanNode: IScanNode, next: Function) => {
-          const config: any = {
+        async (scanNode: IScanNode, next: CallableFunction) => {
+          const config = {
             ...scanNode.context.rootScanNode!.getConfig(ConfigName),
             ...scanNode.getConfig(ConfigName),
             ...opts,
@@ -51,7 +52,7 @@ export function Views(opts?: ViewOptions): ClassDecorator {
 
             const fileAbsPath: string = path.join(rootPath, filePath);
 
-            let html: string = '';
+            let html = '';
 
             if (suffix === 'html') {
               html = fs.readFileSync(fileAbsPath, 'utf8');
@@ -73,7 +74,7 @@ export function Views(opts?: ViewOptions): ClassDecorator {
               html = await templateRender(fileAbsPath, state);
             }
 
-            if (!!minifierOpts) {
+            if (minifierOpts) {
               html = htmlMinify(html, minifierOpts);
             }
 

@@ -9,7 +9,7 @@ export const ConfigName = 'axios';
 export const AXIOS_IDENTIFIER = Symbol.for(ConfigName);
 
 export function AxiosConfig(opts?: AxiosRequestConfig): ClassDecorator {
-  return function(target: Function) {
+  return function(target: NewableFunction) {
     Metadata.decorate([
       Config({
         [ConfigName]: {
@@ -19,8 +19,8 @@ export function AxiosConfig(opts?: AxiosRequestConfig): ClassDecorator {
         }
       }),
 
-      ScanHook(async (scanNode: IScanNode, next: Function) => {
-        const config: any = {
+      ScanHook(async (scanNode: IScanNode, next: CallableFunction) => {
+        const config: AxiosRequestConfig = {
           ...scanNode.context.rootScanNode!.getConfig(ConfigName),
           ...scanNode.getConfig(ConfigName)
         };

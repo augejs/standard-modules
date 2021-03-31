@@ -14,13 +14,14 @@ const SCHEDULE_IDENTIFIER = 'schedule';
 const logger: ILogger = Logger.getLogger(SCHEDULE_IDENTIFIER);
 
 export function ScheduleManager(): ClassDecorator {
-  return function(target: Function) {
+  return function(target: NewableFunction) {
     Metadata.decorate([
       LifecycleOnAppDidReadyHook(
-        async (scanNode: IScanNode, next: Function) => {
+        async (scanNode: IScanNode, next: CallableFunction) => {
           await next();
           const cronJobs: CronJob[] = [];
           for (const task of Schedule.getMetadata()) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const instance: any = task.scanNode.instance;
             if (!instance) continue;
             if (typeof instance[task.propertyKey] !== 'function') continue;
@@ -38,15 +39,18 @@ export function ScheduleManager(): ClassDecorator {
             }
 
             try {
-              const cronJob:CronJob = new CronJob(cron, (...args:any[])=> {
-                if (cronJob.instanceJobRuntime) {
+              const cronJob:CronJob = new CronJob(cron, ()=> {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                if ((cronJob as any).instanceJobRuntime) {
                   // logger.warn(`${task.scanNode.name} ${task.propertyKey.toString()} timeout!`);
                   return;
                 }
                 (async ()=> {
-                  cronJob.instanceJobRuntime = true;
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  (cronJob as any).instanceJobRuntime = true;
                   await instance[task.propertyKey](cronJob);
-                  cronJob.instanceJobRuntime = false;
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  (cronJob as any).instanceJobRuntime = false;
                 })();
               });
 

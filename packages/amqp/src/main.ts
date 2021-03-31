@@ -34,7 +34,7 @@ export function Amqp(opts?: {
   urls: string[],
   options?: AmqpConnectionManagerOptions
 }): ClassDecorator {
-  return function(target: Function) {
+  return function(target: NewableFunction) {
     Metadata.decorate([
       Config({
         [ConfigName]: {
@@ -43,7 +43,8 @@ export function Amqp(opts?: {
         }
       }),
 
-      ScanHook(async (scanNode: IScanNode, next: Function) => {
+      ScanHook(async (scanNode: IScanNode, next: CallableFunction) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const config: any = {
           ...scanNode.context.rootScanNode!.getConfig(ConfigName),
           ...scanNode.getConfig(ConfigName),
@@ -53,7 +54,7 @@ export function Amqp(opts?: {
         const amqp:AmqpConnectionManager = amqpConnectionManager.connect(config.urls, config);
         scanNode.context.container.bind(AMQP_IDENTIFIER).toConstantValue(amqp);
 
-        await new Promise((resolve: Function, reject: Function) => {
+        await new Promise((resolve: CallableFunction, reject: CallableFunction) => {
           amqp.once('connect', ()=> {
             resolve();
           });
@@ -68,7 +69,7 @@ export function Amqp(opts?: {
       }),
 
       LifecycleOnInitHook(
-        async (scanNode: IScanNode, next: Function) => {
+        async (scanNode: IScanNode, next: CallableFunction) => {
           const amqp:AmqpConnectionManager = scanNode.context.container.get(AMQP_IDENTIFIER);
           amqp.on('disconnect', ({err})=> {
             logger.warn(`amqp disconnect error: ${err.stack})`);
@@ -79,7 +80,7 @@ export function Amqp(opts?: {
       ),
 
       LifecycleOnAppWillCloseHook(
-        async (scanNode: IScanNode, next: Function) => {
+        async (scanNode: IScanNode, next: CallableFunction) => {
           const amqp:AmqpConnectionManager = scanNode.context.container.get(AMQP_IDENTIFIER);
           await amqp.close();
 

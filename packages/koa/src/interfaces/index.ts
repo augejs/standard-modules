@@ -7,7 +7,7 @@ import {
 
 export interface IKoaApplication extends Application {
   router: Router
-  [key: string] : any
+  [key: string] : unknown
 }
 
 export interface IKoaContext extends Context {
