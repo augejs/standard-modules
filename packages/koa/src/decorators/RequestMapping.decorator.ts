@@ -83,7 +83,7 @@ const Head = createRequestMappingDecorator(HttpMethodEnum.HEAD);
 const All = createRequestMappingDecorator(HttpMethodEnum.ALL);
 
 RequestMapping.Get = Get;
-RequestMapping.Get = Put;
+RequestMapping.Put = Put;
 RequestMapping.Post = Post;
 RequestMapping.Delete = Delete;
 RequestMapping.Patch = Patch;
