@@ -15,7 +15,7 @@ import {
 
 import { IKoaApplication } from '../interfaces';
 
-import { RequestMapping, HttpMethodEnum, RequestMappingMetadata } from './RequestMapping.decorator';
+import { RequestMapping, RequestMappingMetadata } from './RequestMapping.decorator';
 import { Prefix } from './Prefix.decorator';
 import { Middleware, MiddlewareMetadata } from './Middleware.decorator';
 import { RequestParams } from './RequestParams.decorator';
