@@ -73,8 +73,6 @@ export function MiddlewareFactory(factory: CallableFunction): ClassDecorator & M
 export function HostMiddleware(methodName = 'use', hook?: CallableFunction): ClassDecorator {
   return (target: NewableFunction) => {
     Metadata.decorate([
-      Injectable(),
-      Name(),
       ScanHook(async (scanNode: IScanNode, next: CallableFunction)=> {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const instance: any = scanNode.instance;
