@@ -178,5 +178,5 @@ async function buildRouteByRequestMappingMetadata(router: Router, metadata: Requ
     }
   )
   
-  logger.verbose(`Route bind ${routePaths.join('/')} to ${metadata.scanNode.name}:${metadata.propertyKey.toString()}`);
+  logger.verbose(`Route method: ${requestMethod} bind ${routePaths.join('/')} to ${metadata.scanNode.name}:${metadata.propertyKey.toString()}`);
 }
