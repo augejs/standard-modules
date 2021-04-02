@@ -97,42 +97,11 @@ export function WebServer(opts?: WebServerOptions): ClassDecorator {
               resolve();
             })
           });
-          logger.verbose(`web server start host: ${host} port: ${port}`);
+          logger.verbose(`web server start at http://127.0.0.1:${port}`);
         }
       )
     ], target);
   }
-}
-
-function getRequestMethodByHttpMethodEnum(method: HttpMethodEnum) {
-  let requestMethod = '';
-  switch(method) {
-    case HttpMethodEnum.GET:
-      requestMethod = 'get';
-      break;
-      case HttpMethodEnum.HEAD:
-      requestMethod = 'head';
-      break;
-      case HttpMethodEnum.OPTIONS:
-      requestMethod = 'options';
-      break;
-      case HttpMethodEnum.PATCH:
-      requestMethod = 'patch';
-      break;
-      case HttpMethodEnum.POST:
-        requestMethod = 'post';  
-      break;
-      case HttpMethodEnum.PUT:
-        requestMethod = 'put';
-      break;
-      case HttpMethodEnum.ALL:
-        requestMethod = 'all';
-        break;
-      default:
-        requestMethod = 'get';
-        break;
-  }
-  return requestMethod;
 }
 
 async function buildRouteByRequestMappingMetadata(router: Router, metadata: RequestMappingMetadata) {
@@ -167,7 +136,7 @@ async function buildRouteByRequestMappingMetadata(router: Router, metadata: Requ
   });
 
   if (routePaths.length === 0) return;
-  const requestMethod:string = getRequestMethodByHttpMethodEnum(metadata.method);
+  const requestMethod:string = metadata.method.toString() || 'get';
   const methodMiddlewareList:CallableFunction[] = [];
   Middleware.getMetadata(metadata.scanNode.provider).forEach((middlewareMetadata: MiddlewareMetadata) => {
     if (!middlewareMetadata.propertyKey) return;

@@ -1,14 +1,14 @@
 import { Metadata, ScanHook, IScanNode } from '@augejs/core';
 
 export enum HttpMethodEnum {
-  ALL = 0,
-  GET,
-  POST,
-  PUT,
-  DELETE,
-  PATCH,
-  OPTIONS,
-  HEAD,
+  ALL = 'all',
+  GET = 'get',
+  POST = 'post',
+  PUT = 'put',
+  DELETE = 'delete',
+  PATCH = 'patch',
+  OPTIONS = 'options',
+  HEAD = 'head',
 }
 
 export interface IRequestMappingOptions {
