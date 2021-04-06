@@ -13,7 +13,7 @@ export const ConfigName = 'mail';
 
 export const MAIL_IDENTIFIER = Symbol.for(ConfigName);
 
-export function MailTransport(opts: SMTPTransport.Options): ClassDecorator {
+export function MailTransport(opts?: SMTPTransport.Options): ClassDecorator {
   return function(target: NewableFunction) {
     Metadata.decorate([
       ScanHook(
