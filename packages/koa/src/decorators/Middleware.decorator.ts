@@ -1,4 +1,4 @@
-import { Metadata, ScanHook, IScanNode, Injectable, Name, LifecycleOnInitHook } from '@augejs/core';
+import { Metadata, ScanHook, IScanNode, LifecycleOnInitHook } from '@augejs/core';
 import { ValidationError } from 'class-validator';
 import { IKoaContext } from 'interfaces';
 
