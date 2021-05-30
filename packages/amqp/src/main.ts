@@ -1,5 +1,5 @@
 
-import { Config, Metadata, ScanHook, IScanNode, LifecycleOnInitHook, Logger, LifecycleOnAppWillCloseHook } from '@augejs/core'
+import { Config, Metadata, ScanHook, ScanNode, LifecycleOnInitHook, Logger, LifecycleOnAppWillCloseHook } from '@augejs/core'
 import amqpConnectionManager, { 
   AmqpConnectionManager, 
   AmqpConnectionManagerOptions 
@@ -43,7 +43,7 @@ export function Amqp(opts?: {
         }
       }),
 
-      ScanHook(async (scanNode: IScanNode, next: CallableFunction) => {
+      ScanHook(async (scanNode: ScanNode, next: CallableFunction) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const config: any = {
           ...scanNode.context.rootScanNode!.getConfig(ConfigName),
@@ -69,7 +69,7 @@ export function Amqp(opts?: {
       }),
 
       LifecycleOnInitHook(
-        async (scanNode: IScanNode, next: CallableFunction) => {
+        async (scanNode: ScanNode, next: CallableFunction) => {
           const amqp:AmqpConnectionManager = scanNode.context.container.get(AMQP_IDENTIFIER);
           amqp.on('disconnect', ({err})=> {
             logger.warn(`amqp disconnect error: ${err.stack})`);
@@ -80,7 +80,7 @@ export function Amqp(opts?: {
       ),
 
       LifecycleOnAppWillCloseHook(
-        async (scanNode: IScanNode, next: CallableFunction) => {
+        async (scanNode: ScanNode, next: CallableFunction) => {
           const amqp:AmqpConnectionManager = scanNode.context.container.get(AMQP_IDENTIFIER);
           await amqp.close();
 

@@ -1,4 +1,4 @@
-import { Config, Metadata, ScanHook, IScanNode, LifecycleOnInitHook, LogLevel, ILogTransport, ILogItem, Logger, LifecycleOnAppWillCloseHook } from '@augejs/core';
+import { Config, Metadata, ScanHook, ScanNode, LifecycleOnInitHook, LogLevel, LogTransport, Logger, LifecycleOnAppWillCloseHook } from '@augejs/core';
 import log4js, { Logger as Log4JsLogger, Configuration } from 'log4js';
 
 export const ConfigName = 'log4js';
@@ -20,7 +20,7 @@ export function Log4js(opts?: Configuration): ClassDecorator {
         }
       }),
 
-      ScanHook(async (scanNode: IScanNode, next: CallableFunction) => {
+      ScanHook(async (scanNode: ScanNode, next: CallableFunction) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const config: Configuration = {
           ...scanNode.context.rootScanNode!.getConfig(ConfigName),
@@ -46,9 +46,9 @@ export function Log4js(opts?: Configuration): ClassDecorator {
       }),
 
       LifecycleOnInitHook(
-        async (scanNode: IScanNode, next: CallableFunction) => {
-          const log4jsLoggerTransport: ILogTransport = {
-            printMessage(logItem:ILogItem) {
+        async (scanNode: ScanNode, next: CallableFunction) => {
+          const log4jsLoggerTransport: LogTransport = {
+            printMessage(logItem) {
               const context:string = logItem.context;
               const message: string = logItem.message;
               const loglevel:string = logItem.level;
@@ -90,7 +90,7 @@ export function Log4js(opts?: Configuration): ClassDecorator {
       ),
 
       LifecycleOnAppWillCloseHook(
-        async (scanNode: IScanNode, next: CallableFunction) => {
+        async (scanNode: ScanNode, next: CallableFunction) => {
           await new Promise((resolve: CallableFunction, reject: CallableFunction) => {
             log4js.shutdown((err) => {
               if (!err) {

@@ -5,15 +5,15 @@ import {
   Config,
   hookUtil, 
   ILogger, 
-  IScanContext, 
-  IScanNode, 
+  ScanContext, 
+  ScanNode, 
   Lifecycle__onAppReady__Hook, 
   Logger, 
   Metadata, 
   ScanHook 
 } from "@augejs/core";
 
-import { IKoaApplication } from '../interfaces';
+import { KoaApplication } from '../interfaces';
 
 import { RequestMapping, RequestMappingMetadata } from './RequestMapping.decorator';
 import { Prefix } from './Prefix.decorator';
@@ -27,8 +27,8 @@ const logger: ILogger = Logger.getLogger(ConfigName);
 
 declare module 'koa' {
   interface Context {
-    scanContext: IScanContext
-    app: IKoaApplication;
+    scanContext: ScanContext
+    app: KoaApplication;
   }
 }
 
@@ -54,7 +54,7 @@ export function WebServer(opts?: WebServerOptions): ClassDecorator {
         }
       }),
 
-      ScanHook(async (scanNode: IScanNode, next: CallableFunction) => {
+      ScanHook(async (scanNode: ScanNode, next: CallableFunction) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const config: any = {
           ...scanNode.context.rootScanNode!.getConfig(ConfigName),
@@ -62,7 +62,7 @@ export function WebServer(opts?: WebServerOptions): ClassDecorator {
         }
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const koa: any = new Application();
+        const koa = new Application() as KoaApplication;
         const router: Router = new Router({
           prefix: config.prefix,
           methods: config.methods,
@@ -75,8 +75,8 @@ export function WebServer(opts?: WebServerOptions): ClassDecorator {
         await next();
       }),
       Lifecycle__onAppReady__Hook(
-        async (scanNode: IScanNode, next: CallableFunction) => {
-          const koa: IKoaApplication = scanNode.context.container.get<IKoaApplication>(KOA_WEB_SERVER_IDENTIFIER);
+        async (scanNode: ScanNode, next: CallableFunction) => {
+          const koa: KoaApplication = scanNode.context.container.get<KoaApplication>(KOA_WEB_SERVER_IDENTIFIER);
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const config: any = scanNode.getConfig(ConfigName);
           koa.context.scanContext = scanNode.context;

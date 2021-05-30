@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-import { ConfigLoader, IScanNode, __appRootDir } from '@augejs/core';
+import { ConfigLoader, ScanNode, __appRootDir } from '@augejs/core';
 import properties from 'properties';
 
 // https://github.com/gagle/node-properties#parse
@@ -9,9 +9,9 @@ import properties from 'properties';
 export function PropertiesConfig(filePath: string = process.env.APP_CONFIG_PATH || path.join(__appRootDir, 'config/app.properties'), 
   opts?: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    processor?: (result: any, scanNode: IScanNode) => any | void | Promise<any| void>
+    processor?: (result: any, scanNode: ScanNode) => any | void | Promise<any| void>
   }) :ClassDecorator {
-  return ConfigLoader(async (scanNode: IScanNode )=> {    
+  return ConfigLoader(async (scanNode: ScanNode )=> {    
     // eslint-disable-next-line @typescript-eslint/ban-types
     let result:object = properties.parse(fs.readFileSync(filePath, 'utf8'), {
       include: false,

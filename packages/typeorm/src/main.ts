@@ -1,5 +1,5 @@
 import { createConnection, createConnections, ConnectionOptions, getMetadataArgsStorage  } from "typeorm"
-import { Metadata, ScanHook, IScanNode } from '@augejs/core'
+import { Metadata, ScanHook, ScanNode } from '@augejs/core'
 
 const ConfigName = 'typeorm';
 
@@ -23,7 +23,7 @@ function processDefaultEntities(config: any):void {
 export function Typeorm(opts?: Partial<ConnectionOptions>  | Partial<ConnectionOptions>[]): ClassDecorator {
   return function(target: NewableFunction) {
     Metadata.decorate([
-      ScanHook(async (scanNode: IScanNode, next: CallableFunction) => {
+      ScanHook(async (scanNode: ScanNode, next: CallableFunction) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const rootConfig: Partial<ConnectionOptions> | Partial<ConnectionOptions>[] | null = scanNode.context.rootScanNode!.getConfig(ConfigName) ?? null;
         const optsConfig: Partial<ConnectionOptions> | Partial<ConnectionOptions>[] | null = opts ?? null;
