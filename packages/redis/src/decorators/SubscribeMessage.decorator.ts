@@ -1,7 +1,7 @@
-import { IScanNode, Metadata, ScanHook } from "@augejs/core";
+import { ScanNode, Metadata, ScanHook } from "@augejs/core";
 
 interface Subscriber  {
-  scanNode: IScanNode,
+  scanNode: ScanNode,
   channel: string,
   propertyKey: string | symbol
 }
@@ -10,7 +10,7 @@ export function SubscribeMessage(channel: string): MethodDecorator {
   // eslint-disable-next-line @typescript-eslint/ban-types
   return (target:Object, propertyKey:string | symbol, descriptor: PropertyDescriptor) => {
     Metadata.decorate([
-      ScanHook(async (scanNode: IScanNode, next: CallableFunction) => {
+      ScanHook(async (scanNode: ScanNode, next: CallableFunction) => {
         SubscribeMessage.defineMetadata({
           scanNode,
           propertyKey,

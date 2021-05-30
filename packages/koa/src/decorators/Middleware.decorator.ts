@@ -1,9 +1,9 @@
-import { Metadata, ScanHook, IScanNode, LifecycleOnInitHook } from '@augejs/core';
+import { Metadata, ScanHook, ScanNode, LifecycleOnInitHook } from '@augejs/core';
 import { ValidationError } from 'class-validator';
-import { IKoaContext } from 'interfaces';
+import { KoaContext } from 'interfaces';
 
 export type MiddlewareMetadata = {
-  scanNode: IScanNode
+  scanNode: ScanNode
   propertyKey?: string | symbol,
   hooks: CallableFunction[],
 }
@@ -14,7 +14,7 @@ export function Middleware(hooks: CallableFunction[] | CallableFunction): ClassD
     const isConstructor:boolean = typeof target === 'function';
     const constructor:CallableFunction = isConstructor ? (target as CallableFunction) : target.constructor; 
     Metadata.decorate([
-      ScanHook(async (scanNode: IScanNode, next: CallableFunction)=> {
+      ScanHook(async (scanNode: ScanNode, next: CallableFunction)=> {
         const metadata: MiddlewareMetadata = {
           scanNode,
           propertyKey: isConstructor ? undefined : key,
@@ -31,7 +31,7 @@ export function MiddlewareHandler(hook?: CallableFunction): MethodDecorator {
   // eslint-disable-next-line @typescript-eslint/ban-types
   return (target: Object, key: string | symbol) => {
     Metadata.decorate([
-      ScanHook(async (scanNode: IScanNode, next: CallableFunction)=> {
+      ScanHook(async (scanNode: ScanNode, next: CallableFunction)=> {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const instance: any = scanNode.instance;
         if (!instance) return;
@@ -56,7 +56,7 @@ export function MiddlewareFactory(factory: CallableFunction): ClassDecorator & M
     const isConstructor:boolean = typeof target === 'function';
     const constructor:CallableFunction = isConstructor ? (target as CallableFunction) : target.constructor; 
     Metadata.decorate([
-      LifecycleOnInitHook(async (scanNode: IScanNode, next: CallableFunction)=> {
+      LifecycleOnInitHook(async (scanNode: ScanNode, next: CallableFunction)=> {
         const hooks: CallableFunction[] | CallableFunction = await factory(scanNode);
         const metadata: MiddlewareMetadata = {
           scanNode,
@@ -73,7 +73,7 @@ export function MiddlewareFactory(factory: CallableFunction): ClassDecorator & M
 export function HostMiddleware(methodName = 'use', hook?: CallableFunction): ClassDecorator {
   return (target: NewableFunction) => {
     Metadata.decorate([
-      LifecycleOnInitHook(async (scanNode: IScanNode, next: CallableFunction)=> {
+      LifecycleOnInitHook(async (scanNode: ScanNode, next: CallableFunction)=> {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const instance: any = scanNode.instance;
         if (!instance) return;
@@ -94,7 +94,7 @@ export function HostMiddleware(methodName = 'use', hook?: CallableFunction): Cla
 }
 
 export function ErrorMiddlewareHandler(): MethodDecorator {
-  async function defaultErrorMiddleware (ctx: IKoaContext, next: CallableFunction) {
+  async function defaultErrorMiddleware (ctx: KoaContext, next: CallableFunction) {
     try {
       await next();
       if (ctx.response.status === 404 && !ctx.response.body) ctx.throw(404);

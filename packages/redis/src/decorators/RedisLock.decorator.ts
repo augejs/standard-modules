@@ -1,4 +1,4 @@
-import { IScanNode } from "@augejs/core";
+import { ScanNode } from "@augejs/core";
 import { Commands } from "ioredis";
 import { REDIS_IDENTIFIER } from './RedisConnection.decorator';
 
@@ -13,7 +13,7 @@ export function RedisLock(opts?: RedisLockOptions): MethodDecorator {
   return (target:unknown, propertyKey:string | symbol, descriptor: PropertyDescriptor) => {
     const originalMethod: CallableFunction = descriptor!.value;
     descriptor.value = async function (...args: unknown[]) {
-      const scanNode: IScanNode | null = this['$scanNode'] || null;
+      const scanNode: ScanNode | null = this['$scanNode'] || null;
       const redis: Commands | null = scanNode?.context.container.get(REDIS_IDENTIFIER) || null;
       const redisLockKey = `${RedisLockPrefix}:${opts?.key ?? propertyKey.toString()}`;
 

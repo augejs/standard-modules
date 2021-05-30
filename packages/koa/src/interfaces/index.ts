@@ -2,14 +2,14 @@ import Router from '@koa/router';
 import Application, { Context } from 'koa';
 
 import { 
-  IScanContext, 
+  ScanContext, 
 } from "@augejs/core";
 
-export interface IKoaApplication extends Application {
+export interface KoaApplication extends Application {
   router: Router
   [key: string] : unknown
 }
 
-export interface IKoaContext extends Context {
-  scanContext: IScanContext
+export interface KoaContext extends Context {
+  scanContext: ScanContext
 }

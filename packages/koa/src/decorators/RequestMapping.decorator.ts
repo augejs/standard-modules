@@ -1,4 +1,4 @@
-import { Metadata, ScanHook, IScanNode } from '@augejs/core';
+import { Metadata, ScanHook, ScanNode } from '@augejs/core';
 
 export enum HttpMethodEnum {
   ALL = 'all',
@@ -17,7 +17,7 @@ export interface IRequestMappingOptions {
 }
 
 export type RequestMappingMetadata = {
-  scanNode: IScanNode,
+  scanNode: ScanNode,
   propertyKey: string | symbol,
   method: HttpMethodEnum,
   paths: string[],
@@ -39,7 +39,7 @@ export function RequestMapping(options?:IRequestMappingOptions | string): Method
     }).filter(Boolean);
 
     Metadata.decorate([
-      ScanHook(async (scanNode: IScanNode, next: CallableFunction)=> {
+      ScanHook(async (scanNode: ScanNode, next: CallableFunction)=> {
         const metadata: RequestMappingMetadata = {
           scanNode,
           propertyKey,

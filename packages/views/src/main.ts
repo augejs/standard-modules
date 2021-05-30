@@ -3,7 +3,7 @@ import consolidate from 'consolidate';
 import { minify as htmlMinify } from 'html-minifier';
 import path from 'path';
 import fs from 'fs';
-import { Metadata, IScanNode, ScanHook, Config, __appRootDir } from '@augejs/core';
+import { Metadata, ScanNode, ScanHook, Config, __appRootDir } from '@augejs/core';
 
 export const ConfigName = 'views';
 export const VIEWS_IDENTIFIER= Symbol.for(ConfigName);
@@ -32,7 +32,7 @@ export function Views(opts?: ViewOptions): ClassDecorator {
         }
       }),
       ScanHook(
-        async (scanNode: IScanNode, next: CallableFunction) => {
+        async (scanNode: ScanNode, next: CallableFunction) => {
           const config = {
             ...scanNode.context.rootScanNode!.getConfig(ConfigName),
             ...scanNode.getConfig(ConfigName),

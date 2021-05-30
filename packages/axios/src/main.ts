@@ -1,4 +1,4 @@
-import { Config, Metadata, ScanHook, IScanNode } from '@augejs/core';
+import { Config, Metadata, ScanHook, ScanNode } from '@augejs/core';
 
 import Axios, { AxiosRequestConfig } from 'axios';
 
@@ -19,7 +19,7 @@ export function AxiosConfig(opts?: AxiosRequestConfig): ClassDecorator {
         }
       }),
 
-      ScanHook(async (scanNode: IScanNode, next: CallableFunction) => {
+      ScanHook(async (scanNode: ScanNode, next: CallableFunction) => {
         const config: AxiosRequestConfig = {
           ...scanNode.context.rootScanNode!.getConfig(ConfigName),
           ...scanNode.getConfig(ConfigName)

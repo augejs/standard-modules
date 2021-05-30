@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs';
-import { Metadata, IScanNode, ScanHook, Config, __appRootDir } from '@augejs/core';
+import { Metadata, ScanNode, ScanHook, Config, __appRootDir } from '@augejs/core';
 import yaml from 'js-yaml';
 import properties from 'properties';
 import {createIntl, createIntlCache, IntlShape, CustomFormats, OnErrorFn } from '@formatjs/intl'
@@ -60,7 +60,7 @@ export function I18n(opts?: I18nOptions): ClassDecorator {
         }
       }),
       ScanHook(
-        async (scanNode: IScanNode, next: CallableFunction) => {
+        async (scanNode: ScanNode, next: CallableFunction) => {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const config: any = {
             ...scanNode.context.rootScanNode?.getConfig(ConfigName),

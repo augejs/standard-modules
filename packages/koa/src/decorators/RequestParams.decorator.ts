@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { Metadata } from '@augejs/core';
 import { transformAndValidate, ClassType, TransformValidationOptions } from 'class-transformer-validator';
-import { IKoaContext } from '../interfaces';
+import { KoaContext } from '../interfaces';
 
 export function RequestParams(processor: (input: any) => any | void | Promise<any | void>):ParameterDecorator {
   return (target: Object, propertyKey: string | symbol, parameterIndex: number) => {
@@ -19,10 +19,10 @@ RequestParams.getMetadata = (target: Object, propertyKey: string | symbol, param
 }
 
 RequestParams.Context = ():ParameterDecorator => {
-  return RequestParams((context: IKoaContext) => context);
+  return RequestParams((context: KoaContext) => context);
 }
-RequestParams.Custom = (custom: (context: IKoaContext) => any):ParameterDecorator => {
-  return RequestParams((context: IKoaContext) => {
+RequestParams.Custom = (custom: (context: KoaContext) => any):ParameterDecorator => {
+  return RequestParams((context: KoaContext) => {
     return custom(context) || context;
   });
 }
@@ -34,19 +34,19 @@ RequestParams.Validate = (classType: ClassType<any>, options?: TransformValidati
 }
 
 RequestParams.Request = ():ParameterDecorator => {
-  return RequestParams((context: IKoaContext) => context.request);
+  return RequestParams((context: KoaContext) => context.request);
 }
 
 RequestParams.Response = ():ParameterDecorator => {
-  return RequestParams((context: IKoaContext) => context.response);
+  return RequestParams((context: KoaContext) => context.response);
 }
 
 RequestParams.Cookies = ():ParameterDecorator => {
-  return RequestParams((context: IKoaContext) => context.cookies);
+  return RequestParams((context: KoaContext) => context.cookies);
 }
 
 RequestParams.Header = (key?: string | string[] | RequestParamsFunction):ParameterDecorator => {
-  return RequestParams((context: IKoaContext) => {
+  return RequestParams((context: KoaContext) => {
     const header = context.header;
     if (Array.isArray(key)) {
       return key.reduce<any>((results: any, currentKey: string) => {
@@ -62,17 +62,17 @@ RequestParams.Header = (key?: string | string[] | RequestParamsFunction):Paramet
   });
 }
 RequestParams.Host = ():ParameterDecorator => {
-  return RequestParams((context: IKoaContext) => context.host);
+  return RequestParams((context: KoaContext) => context.host);
 }
 
 RequestParams.Hostname = ():ParameterDecorator => {
-  return RequestParams((context: IKoaContext) => context.hostname);
+  return RequestParams((context: KoaContext) => context.hostname);
 }
 
-type RequestParamsFunction = (value: any, context?: IKoaContext) => any;
+type RequestParamsFunction = (value: any, context?: KoaContext) => any;
 
 RequestParams.Query = (key?: string | string[] | RequestParamsFunction):ParameterDecorator => {
-  return RequestParams((context: IKoaContext) => {
+  return RequestParams((context: KoaContext) => {
     const query = context.query;
     if (Array.isArray(key)) {
       return key.reduce<any>((results: any, currentKey: string) => {
@@ -88,7 +88,7 @@ RequestParams.Query = (key?: string | string[] | RequestParamsFunction):Paramete
 }
 
 RequestParams.Body = (key?: string | string[] | RequestParamsFunction):ParameterDecorator => {
-  return RequestParams((context: IKoaContext) => {
+  return RequestParams((context: KoaContext) => {
     const body = (context.request as any).body;
     if (Array.isArray(key)) {
       return key.reduce<any>((results: any, currentKey: string) => {
@@ -105,7 +105,7 @@ RequestParams.Body = (key?: string | string[] | RequestParamsFunction):Parameter
 }
 
 RequestParams.Params = (key?: string | string[] | RequestParamsFunction):ParameterDecorator => {
-  return RequestParams((context: IKoaContext) => {
+  return RequestParams((context: KoaContext) => {
     const params = context.params;
     if (Array.isArray(key)) {
       return key.reduce<any>((results: any, currentKey: string)=>{
@@ -121,71 +121,71 @@ RequestParams.Params = (key?: string | string[] | RequestParamsFunction):Paramet
 }
 
 RequestParams.Method = ():ParameterDecorator => {
-  return RequestParams((context: IKoaContext) => context.method);
+  return RequestParams((context: KoaContext) => context.method);
 } 
 
 RequestParams.Path = ():ParameterDecorator => {
-  return RequestParams((context: IKoaContext) => context.path);
+  return RequestParams((context: KoaContext) => context.path);
 } 
 
 RequestParams.Url = ():ParameterDecorator => {
-  return RequestParams((context: IKoaContext) => context.url);
+  return RequestParams((context: KoaContext) => context.url);
 } 
 
 RequestParams.OriginalUrl = ():ParameterDecorator => {
-  return RequestParams((context: IKoaContext) => context.originalUrl);
+  return RequestParams((context: KoaContext) => context.originalUrl);
 } 
 
 RequestParams.Origin = ():ParameterDecorator => {
-  return RequestParams((context: IKoaContext) => context.origin);
+  return RequestParams((context: KoaContext) => context.origin);
 }
 
 RequestParams.Href = ():ParameterDecorator => {
-  return RequestParams((context: IKoaContext) => context.href);
+  return RequestParams((context: KoaContext) => context.href);
 }
 
 RequestParams.Fresh = ():ParameterDecorator => {
-  return RequestParams((context: IKoaContext) => context.fresh);
+  return RequestParams((context: KoaContext) => context.fresh);
 }
 
 RequestParams.Stale = ():ParameterDecorator => {
-  return RequestParams((context: IKoaContext) => context.stale);
+  return RequestParams((context: KoaContext) => context.stale);
 }
 
 RequestParams.Protocol = ():ParameterDecorator => {
-  return RequestParams((context: IKoaContext) => context.protocol);
+  return RequestParams((context: KoaContext) => context.protocol);
 }
 
 RequestParams.Secure = ():ParameterDecorator => {
-  return RequestParams((context: IKoaContext) => context.secure);
+  return RequestParams((context: KoaContext) => context.secure);
 }
 
 RequestParams.IP = ():ParameterDecorator => {
-  return RequestParams((context: IKoaContext) => context.ip);
+  return RequestParams((context: KoaContext) => context.ip);
 }
 
 RequestParams.IPs = ():ParameterDecorator => {
-  return RequestParams((context: IKoaContext) => context.ip);
+  return RequestParams((context: KoaContext) => context.ip);
 }
 
 RequestParams.Subdomains = ():ParameterDecorator => {
-  return RequestParams((context: IKoaContext) => context.subdomains);
+  return RequestParams((context: KoaContext) => context.subdomains);
 }
 
 RequestParams.ContentType = ():ParameterDecorator => {
-  return RequestParams((context: IKoaContext) => context.request.type);
+  return RequestParams((context: KoaContext) => context.request.type);
 }
 
 RequestParams.Charset = ():ParameterDecorator => {
-  return RequestParams((context: IKoaContext) => context.request.charset);
+  return RequestParams((context: KoaContext) => context.request.charset);
 }
 
 RequestParams.Files = ():ParameterDecorator => {
-  return RequestParams((context: IKoaContext) => context['files']);
+  return RequestParams((context: KoaContext) => context['files']);
 }
 
 RequestParams.File = ():ParameterDecorator => {
-  return RequestParams((context: IKoaContext) => context['file']);
+  return RequestParams((context: KoaContext) => context['file']);
 }
 
 

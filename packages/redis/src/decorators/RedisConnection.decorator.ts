@@ -1,4 +1,4 @@
-import { IScanNode, LifecycleOnAppDidReadyHook, LifecycleOnAppWillCloseHook, LifecycleOnInitHook, Metadata, ScanHook } from "@augejs/core";
+import { ScanNode, LifecycleOnAppDidReadyHook, LifecycleOnAppWillCloseHook, LifecycleOnInitHook, Metadata, ScanHook } from "@augejs/core";
 import { SubscribeMessage } from "./SubscribeMessage.decorator";
 import IORedis, { Redis } from "ioredis";
 
@@ -14,7 +14,7 @@ export function RedisConnection(opts?: unknown): ClassDecorator {
     Metadata.decorate([
 
       ScanHook(
-        async (scanNode: IScanNode, next: CallableFunction) => {
+        async (scanNode: ScanNode, next: CallableFunction) => {
           const config: Record<string, unknown> = {
             ...scanNode.context.rootScanNode?.getConfig(ConfigName),
             ...scanNode.getConfig(ConfigName),
@@ -47,7 +47,7 @@ export function RedisConnection(opts?: unknown): ClassDecorator {
       ),
 
       LifecycleOnInitHook(
-        async (scanNode: IScanNode, next: CallableFunction) => {
+        async (scanNode: ScanNode, next: CallableFunction) => {
           const redis: Redis = scanNode.context.container.get<Redis>(REDIS_IDENTIFIER);
           await redis.connect();
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -86,7 +86,7 @@ export function RedisConnection(opts?: unknown): ClassDecorator {
         }
       ),
 
-      LifecycleOnAppDidReadyHook(async (scanNode: IScanNode, next: CallableFunction) => {
+      LifecycleOnAppDidReadyHook(async (scanNode: ScanNode, next: CallableFunction) => {
         if (!scanNode.context.container.isBound(REDIS_SUBSCRIBER_IDENTIFIER)) {
           await next();
           return;
@@ -113,7 +113,7 @@ export function RedisConnection(opts?: unknown): ClassDecorator {
       }),
 
       LifecycleOnAppWillCloseHook(
-        async (scanNode: IScanNode, next: CallableFunction) => {
+        async (scanNode: ScanNode, next: CallableFunction) => {
           const redis: Redis = scanNode.context.container.get<Redis>(REDIS_IDENTIFIER);
           await redis.disconnect();
           

@@ -1,4 +1,4 @@
-import { IScanNode, Metadata, ScanHook } from '@augejs/core';
+import { ScanNode, Metadata, ScanHook } from '@augejs/core';
 
 /**
  * 
@@ -23,7 +23,7 @@ export function Schedule(cron:string | CallableFunction):MethodDecorator {
   // eslint-disable-next-line @typescript-eslint/ban-types
   return (target: Object, propertyKey: string | symbol, descriptor: PropertyDescriptor) => {
     Metadata.decorate([
-      ScanHook(async (scanNode: IScanNode, next: CallableFunction) => {
+      ScanHook(async (scanNode: ScanNode, next: CallableFunction) => {
         Schedule.defineMetadata({
           scanNode,
           propertyKey,
@@ -38,7 +38,7 @@ export function Schedule(cron:string | CallableFunction):MethodDecorator {
 }
 
 export type ScheduleTask = {
-  scanNode: IScanNode,
+  scanNode: ScanNode,
   cron: string | CallableFunction,
   propertyKey: string | symbol
 }
