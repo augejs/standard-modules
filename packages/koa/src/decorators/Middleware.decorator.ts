@@ -1,6 +1,4 @@
 import { Metadata, ScanHook, ScanNode, LifecycleOnInitHook } from '@augejs/core';
-import { ValidationError } from 'class-validator';
-import { KoaContext } from 'interfaces';
 
 export type MiddlewareMetadata = {
   scanNode: ScanNode
@@ -17,9 +15,13 @@ export function Middleware(hooks: CallableFunction[] | CallableFunction): ClassD
       ScanHook(async (scanNode: ScanNode, next: CallableFunction)=> {
         const metadata: MiddlewareMetadata = {
           scanNode,
-          propertyKey: isConstructor ? undefined : key,
           hooks: Array.isArray(hooks) ? hooks : [ hooks ],
         }
+
+        if (!isConstructor && key) {
+          metadata.propertyKey = key;
+        }
+
         Middleware.defineMetadata(constructor, metadata);
         await next();
       })
@@ -34,16 +36,16 @@ export function MiddlewareHandler(hook?: CallableFunction): MethodDecorator {
       ScanHook(async (scanNode: ScanNode, next: CallableFunction)=> {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const instance: any = scanNode.instance;
-        if (!instance) return;
 
-        if(typeof instance[key] !== 'function') return;
-        // here we need to add to the parent scan node provider.
-        const methodHook: CallableFunction = (instance[key] as CallableFunction).bind(instance) as CallableFunction;
-        const metadata: MiddlewareMetadata = {
-          scanNode,
-          hooks: hook ? [ hook, methodHook] : [ methodHook ],
+        if (instance && typeof instance[key] === 'function') {
+          // here we need to add to the parent scan node provider.
+          const methodHook: CallableFunction = (instance[key] as CallableFunction).bind(instance) as CallableFunction;
+          const metadata: MiddlewareMetadata = {
+            scanNode,
+            hooks: hook ? [ hook, methodHook] : [ methodHook ],
+          }
+          Middleware.defineMetadata(target.constructor, metadata);
         }
-        Middleware.defineMetadata(target.constructor, metadata);
         await next();
       })
     ], target.constructor);
@@ -60,65 +62,18 @@ export function MiddlewareFactory(factory: CallableFunction): ClassDecorator & M
         const hooks: CallableFunction[] | CallableFunction = await factory(scanNode);
         const metadata: MiddlewareMetadata = {
           scanNode,
-          propertyKey: isConstructor ? undefined : key,
           hooks: Array.isArray(hooks) ? hooks : [ hooks ],
         }
+
+        if (!isConstructor && key) {
+          metadata.propertyKey = key;
+        }
+
         Middleware.defineMetadata(constructor, metadata);
         await next();
       })
     ], constructor);
   }
-}
-
-export function HostMiddleware(methodName = 'use', hook?: CallableFunction): ClassDecorator {
-  return (target: NewableFunction) => {
-    Metadata.decorate([
-      LifecycleOnInitHook(async (scanNode: ScanNode, next: CallableFunction)=> {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const instance: any = scanNode.instance;
-        if (!instance) return;
-
-        if(typeof instance[methodName] !== 'function') return;
-        // here we need to add to the parent scan node provider.
-        const methodHook: CallableFunction = (instance[methodName] as CallableFunction).bind(instance) as CallableFunction;
-        
-        const metadata: MiddlewareMetadata = {
-          scanNode: scanNode.parent!,
-          hooks: hook ? [ hook, methodHook ] : [ methodHook ],
-        }
-        Middleware.defineMetadata(scanNode.parent!.provider, metadata);
-        await next();
-      })
-    ], target);
-  }
-}
-
-export function ErrorMiddlewareHandler(): MethodDecorator {
-  async function defaultErrorMiddleware (ctx: KoaContext, next: CallableFunction) {
-    try {
-      await next();
-      if (ctx.response.status === 404 && !ctx.response.body) ctx.throw(404);
-    } catch (err) {
-      ctx.status = typeof err?.status === 'number' ? err.status : 500;
-      // https://inviqa.com/blog/how-build-basic-api-typescript-koa-and-typeorm
-      
-      // here is the only json
-      ctx.type = 'application/json';
-
-      if (Array.isArray(err) && err.length > 0 && err[0] instanceof ValidationError) {
-        ctx.body = {
-          error: err,
-        }
-      } else {
-        ctx.body = {
-          error: err?.message,
-          stack: (ctx.app.env === 'development' || err?.expose) ? err?.stack : undefined,
-        }
-      }
-    }
-  }
-
-  return MiddlewareHandler(defaultErrorMiddleware);
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-types

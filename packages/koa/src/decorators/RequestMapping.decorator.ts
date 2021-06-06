@@ -12,7 +12,7 @@ export enum HttpMethodEnum {
 }
 
 export interface IRequestMappingOptions {
-  path?: string,
+  path: string | undefined,
   method?: HttpMethodEnum,
 }
 
@@ -25,7 +25,7 @@ export type RequestMappingMetadata = {
 
 export function RequestMapping(options?:IRequestMappingOptions | string): MethodDecorator {
   // eslint-disable-next-line @typescript-eslint/ban-types
-  return (target:Object, propertyKey:string | symbol, descriptor: PropertyDescriptor) => {
+  return (target:Object, propertyKey:string | symbol): void => {
 
     const method:HttpMethodEnum = (typeof options === 'string' ? HttpMethodEnum.GET : options?.method) || HttpMethodEnum.GET;
     const path:string = (typeof options === 'string' ? options : options?.path) || 
@@ -51,8 +51,6 @@ export function RequestMapping(options?:IRequestMappingOptions | string): Method
       })
 
     ], target.constructor);
-
-    return descriptor;
   }
 }
 
