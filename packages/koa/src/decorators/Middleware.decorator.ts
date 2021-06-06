@@ -33,7 +33,7 @@ export function MiddlewareHandler(hook?: CallableFunction): MethodDecorator {
   // eslint-disable-next-line @typescript-eslint/ban-types
   return (target: Object, key: string | symbol) => {
     Metadata.decorate([
-      ScanHook(async (scanNode: ScanNode, next: CallableFunction)=> {
+      LifecycleOnInitHook(async (scanNode: ScanNode, next: CallableFunction)=> {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const instance: any = scanNode.instance;
 
