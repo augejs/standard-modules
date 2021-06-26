@@ -27,7 +27,7 @@ RequestParams.Custom = (custom: (context: KoaContext) => any):ParameterDecorator
   });
 }
 
-RequestParams.Transform = (classType: ClassType<any>, options?: TransformValidationOptions):ParameterDecorator => {
+RequestParams.TransformAndValidate = (classType: ClassType<any>, options?: TransformValidationOptions):ParameterDecorator => {
   return RequestParams((data: any) => {
     return transformAndValidate(classType, data, options);
   });
