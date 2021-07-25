@@ -9,7 +9,7 @@ export const ConfigName = 'i18n';
 
 export const I18N_IDENTIFIER = Symbol.for(ConfigName);
 
-export interface II18n<T=string> extends IntlShape<T> {
+export interface I18n<T=string> extends IntlShape<T> {
   get(locale: string): IntlShape<T>
 }
 
@@ -45,7 +45,7 @@ interface I18nOptions {
   onError?: OnErrorFn
 }
 
-export function I18n(opts?: I18nOptions): ClassDecorator {
+export function I18nConfig(opts?: I18nOptions): ClassDecorator {
   return function(target: NewableFunction) {
     Metadata.decorate([
       Config({
