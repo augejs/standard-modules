@@ -30,7 +30,7 @@ export function RequestMapping(options?:IRequestMappingOptions | string): Method
     const method:HttpMethodEnum = (typeof options === 'string' ? HttpMethodEnum.GET : options?.method) ?? HttpMethodEnum.GET;
     const path:string = (typeof options === 'string' ? options : options?.path) ?? propertyKey.toString() ?? '';
 
-    const paths:string[] = path.split(",")
+    const paths:string[] = path === '' ? [ path ] : path.split(",")
     .filter(Boolean)
     .map((item: string) => {
       return item.trim();
