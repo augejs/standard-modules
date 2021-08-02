@@ -27,10 +27,8 @@ export function RequestMapping(options?:IRequestMappingOptions | string): Method
   // eslint-disable-next-line @typescript-eslint/ban-types
   return (target:Object, propertyKey:string | symbol): void => {
 
-    const method:HttpMethodEnum = (typeof options === 'string' ? HttpMethodEnum.GET : options?.method) || HttpMethodEnum.GET;
-    const path:string = (typeof options === 'string' ? options : options?.path) || 
-    typeof propertyKey === "string" && propertyKey ||
-    '';
+    const method:HttpMethodEnum = (typeof options === 'string' ? HttpMethodEnum.GET : options?.method) ?? HttpMethodEnum.GET;
+    const path:string = (typeof options === 'string' ? options : options?.path) ?? propertyKey.toString() ?? '';
 
     const paths:string[] = path.split(",")
     .filter(Boolean)
