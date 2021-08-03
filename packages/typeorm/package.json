@@ -28,6 +28,7 @@
     "dist"
   ],
   "dependencies": {
+    "tslib": "^2.3.0",
     "typeorm": "^0.2.32"
   }
 }

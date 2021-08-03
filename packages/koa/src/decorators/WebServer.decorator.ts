@@ -1,9 +1,9 @@
 import Application, { Context } from 'koa';
 import path from 'path';
 import Router from '@koa/router';
-import { 
+import {
   Config,
-  hookUtil, 
+  hookUtil,
   ILogger, 
   ScanContext, 
   ScanNode, 
@@ -155,12 +155,12 @@ async function buildRouteByRequestMappingMetadata(router: Router, metadata: Requ
       const methodActualArgs:any[] = [];
       if (instanceMethod.length > 0) {
         for (let idx = 0; idx < instanceMethod.length; idx++) {
-          const argsFns:CallableFunction[] = RequestParams.getMetadata(metadata.scanNode.provider, metadata.propertyKey, idx);
+          const requestParamsProcessors = RequestParams.getMetadata(metadata.scanNode.provider, metadata.propertyKey, idx);
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           let argsResult:any = context;
-          for (const argsFn of argsFns) {
+          for (const requestParamsProcessor of requestParamsProcessors) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            let currentArgsResult: any = argsFn(argsResult);
+            let currentArgsResult: any = requestParamsProcessor(argsResult, instance);
             if (currentArgsResult === undefined) continue;
             if (typeof currentArgsResult?.then === 'function') {
               currentArgsResult = await currentArgsResult;

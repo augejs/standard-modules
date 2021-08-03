@@ -23,7 +23,8 @@
   },
   "dependencies": {
     "@types/cron": "^1.7.2",
-    "cron": "^1.8.2"
+    "cron": "^1.8.2",
+    "tslib": "^2.3.0"
   },
   "files": [
     "dist"

@@ -23,7 +23,8 @@
   },
   "dependencies": {
     "@types/ioredis": "^4.22.2",
-    "ioredis": "^4.24.6"
+    "ioredis": "^4.24.6",
+    "tslib": "^2.3.0"
   },
   "devDependencies": {
     "rimraf": "^3.0.2"

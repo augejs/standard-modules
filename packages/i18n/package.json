@@ -31,6 +31,7 @@
     "@formatjs/intl": "^1.8.5",
     "@types/js-yaml": "^4.0.0",
     "js-yaml": "^4.0.0",
-    "properties": "^1.2.1"
+    "properties": "^1.2.1",
+    "tslib": "^2.3.0"
   }
 }

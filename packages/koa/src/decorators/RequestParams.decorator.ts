@@ -1,35 +1,30 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-types */
 import { Metadata } from '@augejs/core';
-import { transformAndValidate, ClassType, TransformValidationOptions } from 'class-transformer-validator';
 import { KoaContext } from '../interfaces';
 
-export function RequestParams(processor: (input: any) => any | void | Promise<any | void>):ParameterDecorator {
+type RequestParamsProcessorFunction = (input: any, instance?: any) => any | Promise<any>;
+
+export function RequestParams(processor: RequestParamsProcessorFunction):ParameterDecorator {
   return (target: Object, propertyKey: string | symbol, parameterIndex: number) => {
     RequestParams.defineMetadata(target.constructor, processor, propertyKey, parameterIndex);
   }
 }
 
-RequestParams.defineMetadata = (target: Object, reducer: Function, propertyKey: string | symbol, parameterIndex: number) => {
-  Metadata.defineInsertBeginArrayMetadata(propertyKey, [ reducer ], target, parameterIndex.toString());
+RequestParams.defineMetadata = (target: Object, processor: RequestParamsProcessorFunction, propertyKey: string | symbol, parameterIndex: number) => {
+  Metadata.defineInsertBeginArrayMetadata(propertyKey, [ processor ], target, parameterIndex.toString());
 }
 
 RequestParams.getMetadata = (target: Object, propertyKey: string | symbol, parameterIndex: number): Function[] => {
-  return Metadata.getMetadata(propertyKey, target, parameterIndex.toString()) as Function[] || [];
+  return Metadata.getMetadata(propertyKey, target, parameterIndex.toString()) as RequestParamsProcessorFunction[] || [];
 }
 
 RequestParams.Context = ():ParameterDecorator => {
   return RequestParams((context: KoaContext) => context);
 }
-RequestParams.Custom = (custom: (context: KoaContext) => any):ParameterDecorator => {
-  return RequestParams((context: KoaContext) => {
-    return custom(context) || context;
-  });
-}
-
-RequestParams.TransformAndValidate = (classType: ClassType<any>, options?: TransformValidationOptions):ParameterDecorator => {
-  return RequestParams((data: any) => {
-    return transformAndValidate(classType, data, options);
+RequestParams.Custom = (processor: (context: KoaContext, instance?: any) => any):ParameterDecorator => {
+  return RequestParams((context: KoaContext, instance) => {
+    return processor(context, instance) || context;
   });
 }
 
