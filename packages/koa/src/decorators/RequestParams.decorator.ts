@@ -3,7 +3,7 @@
 import { Metadata } from '@augejs/core';
 import { KoaContext } from '../interfaces';
 
-type RequestParamsProcessorFunction = (input: any, instance?: any) => any | Promise<any>;
+type RequestParamsProcessorFunction = (input: any, context?:KoaContext, instance?: any) => any | Promise<any>;
 
 export function RequestParams(processor: RequestParamsProcessorFunction):ParameterDecorator {
   return (target: Object, propertyKey: string | symbol, parameterIndex: number) => {

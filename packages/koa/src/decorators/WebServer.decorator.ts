@@ -160,7 +160,7 @@ async function buildRouteByRequestMappingMetadata(router: Router, metadata: Requ
           let argsResult:any = context;
           for (const requestParamsProcessor of requestParamsProcessors) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            let currentArgsResult: any = requestParamsProcessor(argsResult, instance);
+            let currentArgsResult: any = requestParamsProcessor(argsResult, context, instance);
             if (currentArgsResult === undefined) continue;
             if (typeof currentArgsResult?.then === 'function') {
               currentArgsResult = await currentArgsResult;
