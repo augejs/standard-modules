@@ -1,0 +1,36 @@
+{
+  "name": "@augejs/validator",
+  "version": "1.0.2-rc.1",
+  "description": "",
+  "main": "./dist/main.js",
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "tsc --build ./tsconfig.json",
+    "test": "echo \"Error: no test specified\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/augejs/standard-modules.git"
+  },
+  "author": "Alex.Zhang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/augejs/standard-modules/issues"
+  },
+  "homepage": "https://augejs.github.io/docs/Techniques-Axios",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "class-transformer": "^0.4.0",
+    "class-transformer-validator": "^0.9.1",
+    "class-validator": "^0.13.1",
+    "tslib": "^2.3.0"
+  },
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "rimraf": "^3.0.2"
+  }
+}
