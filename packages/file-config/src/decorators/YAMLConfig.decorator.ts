@@ -2,13 +2,11 @@ import yaml from 'js-yaml';
 import fs from 'fs';
 import { ConfigLoader, ScanNode, __appRootDir } from '@augejs/core';
 import path from 'path';
+import { FileConfigOpts } from './FileConfigOpts';
 
-export function YAMLConfig(filePath: string = process.env.APP_CONFIG_PATH || path.join(__appRootDir, 'config/app.yml'), 
-  opts?: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    processor?: (result: any, scanNode: ScanNode) => any | void | Promise<any| void> 
-  }) :ClassDecorator {
+export function YAMLConfig(opts?: FileConfigOpts) :ClassDecorator {
   return ConfigLoader(async (scanNode: ScanNode )=> {
+    const filePath = opts?.filePath || process.env.APP_CONFIG_PATH || path.join(__appRootDir, 'config/app.yml');
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let result:any = yaml.load(fs.readFileSync(filePath, 'utf8'));
     if (opts?.processor) {
