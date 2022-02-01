@@ -3,7 +3,7 @@ import fs from 'fs';
 import { Metadata, ScanNode, ScanHook, Config, __appRootDir } from '@augejs/core';
 import yaml from 'js-yaml';
 import properties from 'properties';
-import {createIntl, createIntlCache, IntlShape, CustomFormats, OnErrorFn } from '@formatjs/intl'
+import {createIntl, createIntlCache, IntlShape, IntlConfig } from '@formatjs/intl'
 
 export const ConfigName = 'i18n';
 
@@ -35,14 +35,8 @@ function flattening(data:any) {
 
 // https://formatjs.io/docs/intl
 
-interface I18nOptions {
+interface I18nOptions extends IntlConfig {
   root?: string
-  defaultLocale?: string
-  formats?: CustomFormats
-  messages?: Record<string, string>
-  defaultFormats?: CustomFormats
-  defaultRichTextElements?: Record<string, unknown>
-  onError?: OnErrorFn
 }
 
 export function I18nConfig(opts?: I18nOptions): ClassDecorator {
@@ -52,11 +46,6 @@ export function I18nConfig(opts?: I18nOptions): ClassDecorator {
         [ConfigName]: {
           root: path.join(__appRootDir, 'locales'),
           defaultLocale: 'en',
-          formats: null,
-          messages: null,
-          onError: null,
-          defaultFormats: null,
-          defaultRichTextElements: null,
         }
       }),
       ScanHook(
@@ -74,8 +63,7 @@ export function I18nConfig(opts?: I18nOptions): ClassDecorator {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const intlMap: Record<string, IntlShape<any>> = {};
 
-          if (fs.existsSync(localeDir)) {
-
+          if (localeDir && fs.existsSync(localeDir)) {
             for (const localeFileName of fs.readdirSync(localeDir)) {
               if (localeFileName.startsWith('_')) continue;
 
@@ -100,7 +88,7 @@ export function I18nConfig(opts?: I18nOptions): ClassDecorator {
 
               const intl = createIntl({
                 locale: localeName,
-                defaultLocale: localeName,
+                defaultLocale: defaultLocale,
                 messages: {
                   ...config.messages,
                   ...localeMessages,
